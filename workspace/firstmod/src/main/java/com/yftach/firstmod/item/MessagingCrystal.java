@@ -6,12 +6,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+
+import com.yftach.firstmod.block.MessageBlock;
+import com.yftach.firstmod.init.BlockInit;
+
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class MessagingCrystal extends Item{
 
@@ -25,6 +31,16 @@ public class MessagingCrystal extends Item{
 		
 		if(world.isClientSide())
 			return super.use(world, player, hand);
+		
+		world.setBlockAndUpdate(player.blockPosition(), getBlockState(player));
+		sendData(player); 
+		return super.use(world, player, hand);
+		
+		
+	}
+	
+	
+	private void sendData(Player player) {
 		
 		String postEndpoint = "http://localhost:3000";
 		
@@ -50,9 +66,13 @@ public class MessagingCrystal extends Item{
 
         System.out.println("status:" + response.statusCode());
         System.out.println("response:\n" + response.body());
+	}
+	
+	private BlockState getBlockState(Player player) {
 		
-		return super.use(world, player, hand);
-		
+		Direction dir = Direction.fromAxisAndDirection(player.getDirection().getAxis(),
+				player.getDirection().getAxisDirection());
+		return BlockInit.MASSAGE.get().defaultBlockState().setValue(MessageBlock.FACING, dir);
 		
 	}
 }
