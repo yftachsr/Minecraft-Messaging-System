@@ -10,7 +10,9 @@ import java.net.http.HttpResponse.BodyHandlers;
 import com.yftach.firstmod.block.MessageBlock;
 import com.yftach.firstmod.init.BlockInit;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -32,10 +34,16 @@ public class MessagingCrystal extends Item{
 		if(world.isClientSide())
 			return super.use(world, player, hand);
 		
-		world.setBlockAndUpdate(player.blockPosition(), getBlockState(player));
-		sendData(player); 
-		return super.use(world, player, hand);
+		if(player.isOnGround() && !player.isInFluidType()) {
+			world.setBlockAndUpdate(player.blockPosition(), getDirection(player));
+			sendData(player); 
+		} 
+		else
+			player.sendSystemMessage(Component.literal(
+					"Cannot place a message here!").withStyle(ChatFormatting.RED));
 		
+		
+		return super.use(world, player, hand);
 		
 	}
 	
@@ -68,7 +76,7 @@ public class MessagingCrystal extends Item{
         System.out.println("response:\n" + response.body());
 	}
 	
-	private BlockState getBlockState(Player player) {
+	private BlockState getDirection(Player player) {
 		
 		Direction dir = Direction.fromAxisAndDirection(player.getDirection().getAxis(),
 				player.getDirection().getAxisDirection());
