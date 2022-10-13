@@ -8,6 +8,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.*;
 import net.minecraftforge.eventbus.api.IEventBus;
+
+import com.yftach.firstmod.block.entity.BlockEntities;
 import com.yftach.firstmod.init.BlockInit;
 import com.yftach.firstmod.init.ItemInit;
 
@@ -32,6 +34,7 @@ public class FirstMod {
 		ItemInit.ITEMS.register(bus);
 		BlockInit.BLOCKS.register(bus);
 		
+		BlockEntities.BLOCK_ENTITIES.register(bus);
 		
 		MinecraftForge.EVENT_BUS.register(this);
 	}

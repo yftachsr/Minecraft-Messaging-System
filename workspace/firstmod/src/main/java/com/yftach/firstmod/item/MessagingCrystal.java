@@ -80,7 +80,7 @@ public class MessagingCrystal extends Item{
 		
 		Direction dir = Direction.fromAxisAndDirection(player.getDirection().getAxis(),
 				player.getDirection().getAxisDirection());
-		return BlockInit.MASSAGE.get().defaultBlockState().setValue(MessageBlock.FACING, dir);
+		return BlockInit.MASSAGE_BLOCK.get().defaultBlockState().setValue(MessageBlock.FACING, dir);
 		
 	}
 }

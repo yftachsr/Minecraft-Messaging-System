@@ -21,7 +21,7 @@ public class BlockInit {
 	
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, FirstMod.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = ItemInit.ITEMS;
-	public static final RegistryObject<Block> MASSAGE = register("message_block",
+	public static final RegistryObject<Block> MASSAGE_BLOCK = register("message_block",
 			() -> new MessageBlock(BlockBehaviour.Properties.of(Material.AMETHYST, MaterialColor.COLOR_GREEN)
 					.sound(SoundType.AMETHYST).dynamicShape().noOcclusion()), 
 			object -> () -> new BlockItem(object.get(), new Item.Properties().tab(FirstMod.NEW_TAB)));
