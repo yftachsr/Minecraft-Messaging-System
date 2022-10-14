@@ -1,17 +1,22 @@
 package com.yftach.firstmod;
 
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.*;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import com.yftach.firstmod.block.entity.BlockEntities;
 import com.yftach.firstmod.init.BlockInit;
 import com.yftach.firstmod.init.ItemInit;
+import com.yftach.firstmod.screen.MenuTypes;
+import com.yftach.firstmod.screen.MessageBlockScreen;
 
 @Mod("firstmod")
 public class FirstMod {
@@ -36,7 +41,17 @@ public class FirstMod {
 		
 		BlockEntities.BLOCK_ENTITIES.register(bus);
 		
+		MenuTypes.register(bus);
+		
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	public static class ClientModEvents {
+		@SubscribeEvent
+		public static void onClientSetup(FMLClientSetupEvent event) {
+			MenuScreens.register(MenuTypes.MESSAGE_BLOCK_MENU.get(), MessageBlockScreen::new);
+		}
 	}
 
 }

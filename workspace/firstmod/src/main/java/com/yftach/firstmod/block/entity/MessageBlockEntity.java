@@ -3,6 +3,8 @@ package com.yftach.firstmod.block.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.yftach.firstmod.screen.MessageBlockMenu;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +13,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -32,15 +35,31 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	};
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+	
+	//protected final ContainerData data;
+	//private String text = "";
+	
 
 	public MessageBlockEntity(BlockPos pPos, BlockState pBlockState) {
 		super(BlockEntities.MESSAGE_BLOCK.get(), pPos, pBlockState);
+		/*
+		 * this.data = new ContainerData() {
+		 * 
+		 * @Override public void set(int pIndex, int pValue) { // TODO Auto-generated
+		 * method stub
+		 * 
+		 * }
+		 * 
+		 * @Override public int getCount() { // TODO Auto-generated method stub return
+		 * 0; }
+		 * 
+		 * @Override public int get(int pIndex) { return text; } };
+		 */
 	}
 
 	@Override
 	public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-		// TODO Auto-generated method stub
-		return null;
+		return new MessageBlockMenu(pContainerId, pPlayerInventory, this);
 	}
 
 	@Override
