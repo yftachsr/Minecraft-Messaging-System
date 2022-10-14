@@ -37,6 +37,7 @@ public class MessageBlockMenu extends AbstractContainerMenu {
 		this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler ->
 		 	this.addSlot(new SlotItemHandler(handler, 0, 142, 14))
 		);
+		
 	    
 	}
 
