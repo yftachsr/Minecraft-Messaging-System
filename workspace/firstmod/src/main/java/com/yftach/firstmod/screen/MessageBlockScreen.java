@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.yftach.firstmod.FirstMod;
+import com.yftach.firstmod.screen.widgets.ClearEditBox;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -49,7 +50,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	private static final ResourceLocation TEXTURE = new ResourceLocation(FirstMod.MOD_ID,
 			"textures/gui/message_block_gui.png");
 
-	protected EditBox searchBox, box2;
+	protected ClearEditBox searchBox, box2;
 	private String messageText;
 	private Component pageMsg = CommonComponents.EMPTY;
 	private int frameTick;
@@ -65,9 +66,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		this.addRenderableWidget(new Button(100, 100, 20, 20, CommonComponents.GUI_DONE, (p_169820_) -> {
 			this.btn();
 		}));
-		this.searchBox = new EditBox(this.font, this.width / 3, this.height / 3, this.width / 4, this.height / 4,
+		this.searchBox = new ClearEditBox(this.font, this.width / 3, this.height / 3, this.width / 4, this.height / 4,
 				this.searchBox, Component.translatable("selectWorld.search"));
-		this.box2 = new EditBox(this.font, this.width / 3, this.height / 2, this.width / 4, this.height / 5,
+		this.box2 = new ClearEditBox(this.font, this.width / 3, this.height / 2, this.width / 4, this.height / 5,
 				this.searchBox, Component.translatable("selectWorld.search"));
 		this.field = new MultilineTextField(this.font, frameTick);
 		this.addWidget(this.box2);
