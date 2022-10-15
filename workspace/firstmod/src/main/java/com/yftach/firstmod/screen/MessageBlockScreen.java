@@ -1,5 +1,6 @@
 package com.yftach.firstmod.screen;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,9 +51,8 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	private static final ResourceLocation TEXTURE = new ResourceLocation(FirstMod.MOD_ID,
 			"textures/gui/message_block_gui.png");
 
-	protected ClearEditBox searchBox, box2;
-	private String messageText;
-	private Component pageMsg = CommonComponents.EMPTY;
+	protected ClearEditBox textBox1, textBox2, textBox3;
+	private ArrayList<ClearEditBox> textBoxes;
 	private int frameTick;
 	protected MultilineTextField field;
 
@@ -66,15 +66,17 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		this.addRenderableWidget(new Button(100, 100, 20, 20, CommonComponents.GUI_DONE, (p_169820_) -> {
 			this.btn();
 		}));
-		this.searchBox = new ClearEditBox(this.font, this.width / 3, this.height / 3, this.width / 4, this.height / 4,
-				this.searchBox, Component.translatable("selectWorld.search"));
-		this.box2 = new ClearEditBox(this.font, this.width / 3, this.height / 2, this.width / 4, this.height / 5,
-				this.searchBox, Component.translatable("selectWorld.search"));
+		this.textBox1 = new ClearEditBox(this.font, this.width / 2 - 73, this.height / 3 - 25, 95, 10,
+				this.textBox1, Component.translatable("messageBlock.text"));
+		this.textBox2 = new ClearEditBox(this.font, this.width / 2 - 73, this.height / 3 - 15, 95, 10,
+				this.textBox2, Component.translatable("messageBlock.text"));
+		this.textBox3 = new ClearEditBox(this.font, this.width / 2 - 73, this.height / 3 - 5, 95, 10,
+				this.textBox3, Component.translatable("messageBlock.text"));
 		this.field = new MultilineTextField(this.font, frameTick);
-		this.addWidget(this.box2);
-		this.addWidget(this.searchBox);
-		//this.addWidget(this.field);
-		this.setInitialFocus(this.searchBox);
+		this.addWidget(this.textBox1);
+		this.addWidget(this.textBox2);
+		this.addWidget(this.textBox3);
+		this.setInitialFocus(this.textBox1);
 	}
 
 	private void btn() {
@@ -97,9 +99,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		renderBackground(pPoseStack);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 		renderTooltip(pPoseStack, pMouseX, pMouseY);
-		this.box2.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-		this.searchBox.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-		
+		this.textBox1.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+		this.textBox2.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+		this.textBox3.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 	}
 
 	@Override
@@ -119,9 +121,18 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		}
 			
 		if(pCodePoint == 'l') {
-			this.searchBox.insertText("\nq");
+			this.textBox1.insertText("\nq");
 			System.out.println("\nlllllllllllllllllllllll");
 		}
+		
+		if(pCodePoint == 'v') {
+			textBox1.setFocus(false);
+			textBox3.setFocus(false);
+			textBox2.setFocus(true);
+			
+			this.setFocused(textBox2);
+		}
+			
 		return true;
 	}
 
@@ -133,7 +144,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		if(pKeyCode == 'e')
 			return true;
 		if(pKeyCode == 'l' || pKeyCode == 13) {
-			this.searchBox.insertText("\n");
+			this.setFocused(textBox2);
 			return true;
 		}
 		return true;
