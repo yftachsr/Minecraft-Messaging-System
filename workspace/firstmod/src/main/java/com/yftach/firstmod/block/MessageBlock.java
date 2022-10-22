@@ -1,6 +1,6 @@
 package com.yftach.firstmod.block;
 
-import com.yftach.firstmod.block.entity.BlockEntities;
+
 import com.yftach.firstmod.block.entity.MessageBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -20,8 +20,6 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -97,6 +95,7 @@ public class MessageBlock extends BaseEntityBlock {
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
 		return new MessageBlockEntity(pPos, pState);
 	}
+	
 	
 	/*
 	 * @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level

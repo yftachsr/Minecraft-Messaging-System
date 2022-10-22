@@ -2,6 +2,7 @@ package com.yftach.firstmod.screen;
 
 import com.yftach.firstmod.block.entity.MessageBlockEntity;
 import com.yftach.firstmod.init.BlockInit;
+import com.yftach.firstmod.screen.Capabilities.ModCapabilities;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,9 +35,10 @@ public class MessageBlockMenu extends AbstractContainerMenu {
 		addPlayerInventory(inv);
 		addPlayerHotbar(inv);
 	     
-		this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler ->
+		this.blockEntity.getCapability(ModCapabilities.ITEM_HANDLER).ifPresent(handler ->
 		 	this.addSlot(new SlotItemHandler(handler, 0, 142, 14))
 		);
+		
 		
 	    
 	}

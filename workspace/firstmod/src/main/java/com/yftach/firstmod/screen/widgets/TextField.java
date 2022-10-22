@@ -3,7 +3,6 @@ package com.yftach.firstmod.screen.widgets;
 import java.util.ArrayList;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.yftach.firstmod.screen.MessageBlockScreen;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -16,8 +15,7 @@ import net.minecraft.network.chat.Component;
 
 public class TextField extends AbstractWidget implements Widget, GuiEventListener {
 
-	private int numOfRows, pX, pY, width, height, focusedRow;
-	private Component message;
+	private int focusedRow;
 	private ArrayList<ClearEditBox> textBoxes;
 	private Screen screen;
 	private final int MAX_ROW_LENGTH = 14;
@@ -56,6 +54,23 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			result += box.getValue() + "\n";
 		return result;
 	}
+	
+	public void setText(String text) {
+		
+		for(ClearEditBox box: textBoxes) {
+			int index = text.indexOf("\n");
+			if(index <= MAX_ROW_LENGTH && index > -1) {
+				box.setValue(text.substring(0, index));
+				try {
+					text = text.substring(index + 1);
+				} catch(StringIndexOutOfBoundsException e) {
+					break;
+				}
+				
+			}
+		}
+			
+	}
 
 	@Override
 	public void updateNarration(NarrationElementOutput pNarrationElementOutput) {
@@ -73,13 +88,11 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			if(cursorPos == MAX_ROW_LENGTH + 1) {
 				setFocus(focusedRow + 1);
 				textBoxes.get(focusedRow - 1).moveCursorToStart();
-				textBoxes.get(focusedRow).setCursorPosition(1);
-				textBoxes.get(focusedRow).setHighlightPos(1);
+				setCursorPos(focusedRow, 1);
 			}
 			else {
 				textBoxes.get(focusedRow).moveCursorToStart();
-				textBoxes.get(focusedRow).setCursorPosition(cursorPos);
-				textBoxes.get(focusedRow).setHighlightPos(cursorPos);
+				setCursorPos(focusedRow, cursorPos);
 			}
 			
 			
@@ -91,7 +104,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		
-		//System.out.println(pKeyCode);
+		System.out.println(pKeyCode);
 		int cursorPos;
 		
 		switch(pKeyCode) {
@@ -99,28 +112,27 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			int currentFocusedRow = focusedRow;
 			if(focusedRow != 0 && transfer) {
 				setFocus(focusedRow - 1);
-//				cursorPos = textBoxes.get(focusedRow).getValue().length() - 2;
-//				textBoxes.get(focusedRow).setCursorPosition(cursorPos);
-//				textBoxes.get(focusedRow).setHighlightPos(cursorPos);
 				transferText(focusedRow + 1, focusedRow, true, true);
 			}
 			if(focusedRow != textBoxes.size() - 1 && fillLine
 					&& textBoxes.get(currentFocusedRow).getValue().length() >= MAX_ROW_LENGTH - 1) {
-				System.out.println("sdfsdbdfb");
-				fillLine(currentFocusedRow, currentFocusedRow <= textBoxes.size() - 2 && 
-						textBoxes.get(currentFocusedRow + 1).getValue().length() >= MAX_ROW_LENGTH 
-						&& textBoxes.get(currentFocusedRow + 2).getValue().length() != 0);
+				fillLine(currentFocusedRow, currentFocusedRow >= textBoxes.size() - 2 || 
+						textBoxes.get(currentFocusedRow + 1).getValue().length() < MAX_ROW_LENGTH);
 			}
 			break;
 		case KEY_ENTER:
-			
+			if(focusedRow != textBoxes.size() - 1) {
+				setFocus(focusedRow + 1);
+				lowerLines(focusedRow);
+				transferText(focusedRow - 1, focusedRow, false, false);
+			}
+			break;
 		case KEY_DOWN:
 		case KEY_UP:
 			int nextRow = pKeyCode == KEY_DOWN ? 1 : -1;
 			cursorPos = textBoxes.get(focusedRow).getCursorPosition();
 			setFocus(focusedRow + nextRow);
-			textBoxes.get(focusedRow).setCursorPosition(cursorPos);
-			textBoxes.get(focusedRow).setHighlightPos(cursorPos);
+			setCursorPos(focusedRow, cursorPos);
 			break;
 		}
 		
@@ -131,21 +143,43 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		return true;
 	}
 	
+	private void lowerLines(int row) {
+		if(row >= textBoxes.size() - 1)
+			return;
+		if(textBoxes.get(row + 1).getValue().length() != 0)
+			lowerLines(row + 1);
+		int cursorPos = textBoxes.get(row).getCursorPosition();
+		setCursorPos(row, 0);
+		transferText(row, row + 1, false, false);
+		setCursorPos(row, cursorPos);
+		
+	}
+	
+	/**
+	 * Stream the text upwards recursively
+	 * @param row - the row to stream the text to
+	 * @param lastIter - is the last iteration of the recursion
+	 */
 	private void fillLine(int row, boolean lastIter) {
 		
-		if((row >= textBoxes.size() - 1 || textBoxes.get(row + 1).getValue().length() == 0) && lastIter)
+		System.out.println(lastIter);
+		if(row >= textBoxes.size() - 1 || textBoxes.get(row + 1).getValue().length() == 0)
 			return;
 		int cursorPos = textBoxes.get(row).getCursorPosition();
 		String nextRowText = textBoxes.get(row + 1).getValue();
 		textBoxes.get(row).setValue(textBoxes.get(row).getValue() + nextRowText.charAt(0));
 		textBoxes.get(row + 1).setValue(nextRowText.substring(1, nextRowText.length()));
-		textBoxes.get(row).setCursorPosition(cursorPos);
-		textBoxes.get(row).setHighlightPos(cursorPos);
-
-		fillLine(row + 1, row <= textBoxes.size() - 2 && 
-			textBoxes.get(row + 1).getValue().length() >= MAX_ROW_LENGTH && textBoxes.get(row + 2).getValue().length() != 0);
+		setCursorPos(row, cursorPos);
+		if(!lastIter)
+			fillLine(row + 1, row + 1 >= textBoxes.size() - 2 || 
+				textBoxes.get(row + 2).getValue().length() < MAX_ROW_LENGTH);
 	}
 	
+	/**
+	 * Handles recursively the situation where the line is full by streaming 
+	 * the text to the next rows
+	 * @param row - the full row
+	 */
 	private void handleFullLine(int row) {
 		
 		if(row >= textBoxes.size() - 1 || row == textBoxes.size() - 2 
@@ -154,9 +188,6 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		
 		if(textBoxes.get(row + 1).getValue().length() >= MAX_ROW_LENGTH) 
 			handleFullLine(row + 1);
-		
-			
-		//System.out.println(textBoxes.get(row).getValue());
 		
 		char transferChar;
 		try {
@@ -184,7 +215,6 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	 */
 	private void transferText(int from, int to, boolean cutFromBack, boolean copyToFront) {
 		
-		int toCursorPos = textBoxes.get(to).getCursorPosition();
 		int endPos = textBoxes.get(to).getValue().length();
 		int spaceLeft = MAX_ROW_LENGTH - endPos;
 		if(spaceLeft == -1)
@@ -197,15 +227,21 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			toCopy = cutFromBack ? toCopy.substring(0, spaceLeft) : 
 				toCopy.substring(toCopy.length() - spaceLeft, toCopy.length());
 		int copyPos = copyToFront ? endPos : 0;
-		textBoxes.get(to).setCursorPosition(copyPos);
-		textBoxes.get(to).setHighlightPos(copyPos);
+		setCursorPos(to, copyPos);
 		textBoxes.get(to).insertText(toCopy);
-		textBoxes.get(from).setValue(fromText.substring(toCopy.length(), fromText.length()));
-		textBoxes.get(to).setCursorPosition(endPos);
-		textBoxes.get(to).setHighlightPos(endPos);
+		if(cutFromBack) 
+			textBoxes.get(from).setValue(fromText.substring(toCopy.length(), fromText.length()));		
+		else 
+			textBoxes.get(from).setValue(fromBox.getValue().substring(0, fromBox.getValue().length() - toCopy.length()));
+			
+		setCursorPos(to, copyPos);
 			
 	}
-
+	
+	/**
+	 * Sets the focused row
+	 * @param row - row to focus
+	 */
 	private void setFocus(int row) {
 
 		if(row < textBoxes.size() && row >= 0)
@@ -245,10 +281,13 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			transfer = textBoxes.get(focusedRow).getCursorPosition() == 0;
 			lineFull = textBoxes.get(focusedRow).getValue().length() >= MAX_ROW_LENGTH;
 		}
-			
-		
-		
+				
 		return true;
+	}
+	
+	private void setCursorPos(int row, int pos) {
+		textBoxes.get(row).setCursorPosition(pos);
+		textBoxes.get(row).setHighlightPos(pos);
 	}
 
 

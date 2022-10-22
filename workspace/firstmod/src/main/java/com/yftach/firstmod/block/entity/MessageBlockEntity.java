@@ -34,7 +34,10 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		}
 	};
 	
+	public String text = "";
+	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+	private LazyOptional<String> lazyText = LazyOptional.empty();
 	
 	//protected final ContainerData data;
 	//private String text = "";
@@ -81,6 +84,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	public void onLoad() {
 		super.onLoad();
 		lazyItemHandler = LazyOptional.of(() -> itemHandler);
+		lazyText = LazyOptional.of(() -> text);
 	}
 	
 	@Override
@@ -92,6 +96,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	@Override
 	protected void saveAdditional(CompoundTag pTag) {
 		pTag.put("inventory", itemHandler.serializeNBT());
+		pTag.putString("text", text);
 		super.saveAdditional(pTag);
 		
 	}
@@ -100,7 +105,9 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	public void load(CompoundTag pTag) {
 		super.load(pTag);
 		itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+		text = pTag.getString("text");
 	}
+	
 	
 	/*
 	 * public static void tick(Level level, BlockPos pos, BlockState state,

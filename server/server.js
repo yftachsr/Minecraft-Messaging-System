@@ -5,7 +5,7 @@ const express = require('express');
 
 const server = express();
 
-// TO DO make environment variables to the username and password
+// TO DO make environment variables for the username and password
 const uri = "mongodb+srv://yftach:y0504537324@cluster0.02ntz09.mongodb.net/DB0";
 
 server.use(express.json());

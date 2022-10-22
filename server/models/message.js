@@ -18,6 +18,10 @@ const messageSchema = new Schema({
     z: {
         type: Number,
         required: true
+    },
+    text: {
+        type: String,
+        required: false
     }
 }, {timestamps: true});
 
