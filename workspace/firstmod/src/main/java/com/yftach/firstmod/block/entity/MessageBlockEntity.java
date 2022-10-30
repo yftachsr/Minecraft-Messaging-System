@@ -34,7 +34,10 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		}
 	};
 	
-	public String text = "";
+	private String text = "";
+	private String id = "";
+	private boolean editable = true;
+	
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 	private LazyOptional<String> lazyText = LazyOptional.empty();
@@ -97,6 +100,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	protected void saveAdditional(CompoundTag pTag) {
 		pTag.put("inventory", itemHandler.serializeNBT());
 		pTag.putString("text", text);
+		pTag.putBoolean("editable", editable);
 		super.saveAdditional(pTag);
 		
 	}
@@ -106,6 +110,23 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		super.load(pTag);
 		itemHandler.deserializeNBT(pTag.getCompound("inventory"));
 		text = pTag.getString("text");
+		editable = pTag.getBoolean("editable");
+	}
+	
+	public String getText() {
+		return text;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+	public boolean isEditable() {
+		return editable;
+	}
+	
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 	
 	

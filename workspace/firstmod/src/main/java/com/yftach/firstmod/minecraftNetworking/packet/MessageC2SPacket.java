@@ -7,16 +7,18 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class MessageC2SPacket {
 	
-	private String text;
+	private String uuid;
 	
-	public MessageC2SPacket() {}
+	public MessageC2SPacket(String id) {
+		this.uuid = id;
+	}
 	
 	public MessageC2SPacket(FriendlyByteBuf buf) {
-		this.text = buf.readUtf();
+		this.uuid = buf.readUtf();
 	}
 	
 	public void toBytes(FriendlyByteBuf buf) {
-		buf.writeUtf(text);
+		buf.writeUtf(uuid);
 	}
 	
 	public boolean handle(Supplier<NetworkEvent.Context> supplier) {

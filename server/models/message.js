@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
+    playerUUID: {
+        type: String,
+        required: true
+    },
     playerName: {
         type: String,
         required: true
@@ -22,6 +26,10 @@ const messageSchema = new Schema({
     text: {
         type: String,
         required: false
+    },
+    dir: {
+        type: Number,
+        required: true
     }
 }, {timestamps: true});
 

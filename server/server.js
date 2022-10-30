@@ -18,18 +18,15 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch(err => console.log(err));
 
 server.get("/", (req,res) => {
-  
-  message.save()
-    .then((result) => {
+  console.log("GET request received");
+  Message.find()
+    .then(result => {
+      //console.log(result);
       res.send(result);
     })
     .catch((err) => {
       console.log(err);
-    });
-  console.log("Request Received");
-  console.log(req.body);
-  res.send("gsrghbswrbsdbsebredrsfbedbedrfhbedrhb");
-
+    })
 });
 
 server.post('/',(req,res) => {
@@ -44,3 +41,15 @@ server.post('/',(req,res) => {
       console.log(err);
     })
 });
+
+server.put('/', (req, res) => {
+  console.log(req.body);
+  Message.findByIdAndUpdate(req.get("messageId"), req.body, {new: true})
+    .then((result) => {
+      res.send(result);
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+})

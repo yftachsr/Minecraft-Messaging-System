@@ -24,6 +24,7 @@ import com.yftach.firstmod.screen.MessageBlockScreen;
 public class FirstMod {
 	
 	public static final String MOD_ID = "firstmod";
+	public static final String SERVER_ADDRESS = "http://localhost:3000";
 	
 	public static final CreativeModeTab NEW_TAB = new CreativeModeTab(MOD_ID) {
 		

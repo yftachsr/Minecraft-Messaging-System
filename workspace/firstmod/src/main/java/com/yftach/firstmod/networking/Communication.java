@@ -11,13 +11,12 @@ import com.google.gson.JsonObject;
 
 public class Communication {
 	
-	private String endPoint;
-	
-	public Communication(String address) {
-		this.endPoint = address;
-	}
-	
-	public HttpResponse<String> getReq() {
+	/**
+	 * Sends a GET request to the specified end point
+	 * @param endPoint
+	 * @return - Response received
+	 */
+	public static HttpResponse<String> getReq(String endPoint) {
 		
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
@@ -30,16 +29,23 @@ public class Communication {
         HttpResponse<String> response = null;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
+//			System.out.println("status:" + response.statusCode());
+//	        System.out.println("response:\n" + response.body());
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 
-        System.out.println("status:" + response.statusCode());
-        System.out.println("response:\n" + response.body());
+        
         return response;
 	}
 	
-	public HttpResponse<String> postReq(JsonObject data) {
+	/**
+	 * Send a POST request to the specified end point
+	 * @param endPoint
+	 * @param data - String in JSON format to send
+	 * @return - Response received
+	 */
+	public static HttpResponse<String> postReq(String endPoint, String data) {
 		
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
@@ -51,12 +57,41 @@ public class Communication {
         HttpResponse<String> response = null;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
+			System.out.println("status:" + response.statusCode());
+	        System.out.println("response:\n" + response.body());
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 
-        System.out.println("status:" + response.statusCode());
-        System.out.println("response:\n" + response.body());
+        
+        return response;
+	}
+	
+	/**
+	 * Sends a PUT request to the specified end point
+	 * @param endPoint
+	 * @param - String in JSON format to send
+	 * @return - Response received
+	 */
+	public static HttpResponse<String> putReq(String endPoint, String data) {
+		
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(endPoint))
+	            .header("Content-Type", "application/json")
+	            .PUT(HttpRequest.BodyPublishers.ofString(data.toString()))
+	            .build();
+		
+        HttpResponse<String> response = null;
+		try {
+			response = client.send(request, BodyHandlers.ofString());
+			System.out.println("status:" + response.statusCode());
+	        System.out.println("response:\n" + response.body());
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+
+        
         return response;
 	}
 }

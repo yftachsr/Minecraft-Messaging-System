@@ -37,6 +37,16 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		screen.setInitialFocus(textBoxes.get(0));
 		focusedRow = 0;
 	}
+	
+	public void setTextColor(int color) {
+		for(ClearEditBox box: textBoxes)
+			box.setTextColor(color);
+	}
+	
+	public void setUneditableTextColor(int color) {
+		for(ClearEditBox box: textBoxes)
+			box.setTextColorUneditable(color);
+	}
 
 	@Override
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
@@ -48,11 +58,24 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		return textBoxes;
 	}
 
+	public void setEditable(boolean editable) {
+		for(ClearEditBox box: textBoxes)
+			box.setEditable(editable);
+	}
+	
 	public String getText() {
 		String result = "";
 		for (ClearEditBox box : textBoxes)
 			result += box.getValue() + "\n";
 		return result;
+	}
+	
+	public boolean isEmpty() {
+		String text = getText();
+		for(int i = 0; i < textBoxes.size(); i++)
+			if(text.charAt(i) != '\n')
+				return false;
+		return true;
 	}
 	
 	public void setText(String text) {
@@ -104,9 +127,8 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		
-		System.out.println(pKeyCode);
+		//System.out.println(pKeyCode);
 		int cursorPos;
-		
 		switch(pKeyCode) {
 		case KEY_BACKSPACE:
 			int currentFocusedRow = focusedRow;
