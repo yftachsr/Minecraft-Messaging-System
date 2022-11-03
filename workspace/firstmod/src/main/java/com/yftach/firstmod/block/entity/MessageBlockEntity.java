@@ -1,9 +1,13 @@
 package com.yftach.firstmod.block.entity;
 
+import java.util.Iterator;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.yftach.firstmod.screen.MessageBlockMenu;
+import com.yftach.firstmod.updating.Message;
+import com.yftach.firstmod.updating.UpdateHandler;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,6 +65,17 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		 * 
 		 * @Override public int get(int pIndex) { return text; } };
 		 */
+		System.out.println("BLOCK ENTITY");
+		Iterator<Message> iterator = UpdateHandler.messages.iterator();
+		while(iterator.hasNext()) {
+			Message message = iterator.next();
+			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
+			if(pos.equals(pPos)) {
+				this.text = message.getText();
+				this.editable = false;
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -101,8 +116,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		pTag.put("inventory", itemHandler.serializeNBT());
 		pTag.putString("text", text);
 		pTag.putBoolean("editable", editable);
-		super.saveAdditional(pTag);
-		
+		super.saveAdditional(pTag);	
 	}
 	
 	@Override

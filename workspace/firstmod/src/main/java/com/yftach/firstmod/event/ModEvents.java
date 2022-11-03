@@ -65,7 +65,7 @@ public class ModEvents {
 	
 	@SubscribeEvent
 	public static void messageBreak(BlockEvent.BreakEvent event) {
-		event.setCanceled(true);
+		//event.setCanceled(true);
 	}
 	
 	

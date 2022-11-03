@@ -14,6 +14,10 @@ public abstract class ModSchema {
 		return y;
 	}
 	
+	public void setY(double y) {
+		this.y = y;
+	}
+	
 	public double getZ() {
 		return z;
 	}

@@ -4,10 +4,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yftach.firstmod.block.MessageBlock;
+import com.yftach.firstmod.block.entity.MessageBlockEntity;
 import com.yftach.firstmod.event.ModEvents;
 import com.yftach.firstmod.init.BlockInit;
 
@@ -50,7 +52,8 @@ public class UpdateHandler {
 	}
 	
 	private static void placeMessages(LevelAccessor level, ChunkAccess chunk) {
-		Iterator<Message> iterator = messages.iterator();
+		ListIterator<Message> iterator = messages.listIterator();
+		//LinkedList<Message> toAdd = new LinkedList<Message>();
 		while (iterator.hasNext()) {
 			Message message = iterator.next();
 			if(!inChunk(chunk, message))
@@ -58,15 +61,25 @@ public class UpdateHandler {
 			BlockState state = BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
 					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[message.dir]);
 			BlockPos validPos = findValidBlockPos(chunk, message);
-			if(chunk.getBlockState(validPos.below()).getBlock() != BlockInit.MASSAGE_BLOCK.get())
+			iterator.remove();
+			message.setY(validPos.getY());
+			iterator.add(message);
+			System.out.println("PLACE MESSAGES 1");
+			if(chunk.getBlockState(validPos.below()).getBlock() != BlockInit.MASSAGE_BLOCK.get()) {
 				chunk.setBlockState(validPos, state, false);
-		    iterator.remove();
+				//((MessageBlockEntity)chunk.getBlockEntity(validPos)).setText(message.getText());
+			}
+			System.out.println("PLACE MESSAGES 2");
 		}
+		//messages.addAll(toAdd);
 	}
 	
 	private static <T extends ModSchema> BlockPos findValidBlockPos(ChunkAccess chunk, T block) {
 		BlockPos currentPos = new BlockPos(block.x, chunk.getMaxBuildHeight(), block.z);
 		while(currentPos.getY() > chunk.getMinBuildHeight()) {
+			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) 
+				return chunk.getBlockState(currentPos.below()).getBlock() == Blocks.GRASS 
+						? currentPos.below() : currentPos;		
 			if(chunk.getBlockState(currentPos).getBlock() != Blocks.AIR)
 				return currentPos.above();
 			currentPos = currentPos.below();

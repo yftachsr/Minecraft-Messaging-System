@@ -15,4 +15,8 @@ public class Message extends ModSchema{
 		this.text = text;
 		this.dir = dir;
 	}
+	
+	public String getText() {
+		return text;
+	}
 }
