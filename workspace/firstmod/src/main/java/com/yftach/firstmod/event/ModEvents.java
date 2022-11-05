@@ -1,6 +1,5 @@
 package com.yftach.firstmod.event;
 
-
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,30 +29,22 @@ public class ModEvents {
 	
 	private static int worldage = 0;
 	
-	
-//	@SubscribeEvent
-//	public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event){
-//		if(event.getEntity() instanceof MessageBlockEntity) {
-//			
-//		}
-//	}
-	
 	@SubscribeEvent
 	public static void tick(TickEvent.LevelTickEvent event) {
 		worldage++;
-		if(worldage % 2500 == 0) {
-			HttpResponse<String> response = Communication.getReq(FirstMod.SERVER_ADDRESS);
-			if(response != null) // TO DO add code response check
-				UpdateHandler.messages = UpdateHandler.toArrayList(response.body());
-			
+		if(worldage % 1500 == 0) {
+			HttpResponse<String> response = Communication.getReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE);
+			if(response != null && response.statusCode() == 200) { 
+				LinkedList<Message> list = UpdateHandler.toArrayList(response.body());
+				UpdateHandler.messages.addAll(list.subList(UpdateHandler.messages.size(), list.size()));
+			}
 		}
-		
 	}
 	
 	@SubscribeEvent
 	public static void initMessages(LevelEvent.Load event) {
-		HttpResponse<String> response = Communication.getReq(FirstMod.SERVER_ADDRESS);
-		if(response != null) // TO DO add code response check
+		HttpResponse<String> response = Communication.getReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE);
+		if(response != null && response.statusCode() == 200)
 			UpdateHandler.messages = UpdateHandler.toArrayList(response.body());
 	}
 	

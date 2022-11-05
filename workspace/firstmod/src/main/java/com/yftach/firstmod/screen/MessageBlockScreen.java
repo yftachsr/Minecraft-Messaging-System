@@ -1,7 +1,11 @@
 package com.yftach.firstmod.screen;
 
+import java.net.http.HttpResponse;
+import java.util.Iterator;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.firstmod.FirstMod;
@@ -11,11 +15,14 @@ import com.yftach.firstmod.networking.Communication;
 import com.yftach.firstmod.screen.widgets.ClearEditBox;
 import com.yftach.firstmod.screen.widgets.TextField;
 import com.yftach.firstmod.updating.Message;
+import com.yftach.firstmod.updating.UpdateHandler;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -31,11 +38,11 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 
 	private TextField textField;
 	private Player player;
+	private String authorUUID;
 
 	public MessageBlockScreen(MessageBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
 		super(pMenu, pPlayerInventory, pTitle);
 		player = pPlayerInventory.player;
-		
 	}
 
 	@Override
@@ -44,21 +51,31 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		this.addRenderableWidget(new Button(100, 100, 20, 20, CommonComponents.GUI_DONE, (p_169820_) -> {
 			this.btn();
 		}));
+		// TEXT FIELD
 		textField = new TextField(5, this.font, this.width / 2 - 73, this.height / 3 - 25, 
 				95, 10, Component.translatable("messageBlock.text"), this);
 		for(ClearEditBox box: textField.getRows())
 			this.addWidget(box);
-		textField.setText(this.menu.blockEntity.getText());
+		textField.setText(getText());
 		textField.setEditable(this.menu.blockEntity.isEditable());
 		textField.setUneditableTextColor(10460889);
-		//if(this.menu.blockEntity.id != "")
+
+		// WRITEN BY TEXT
+		ClearEditBox writenByBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 30
+				, 70, 10, Component.translatable("messageBlock.writen"));
+		writenByBox.setValue("Writen By:");
+		writenByBox.setEditable(false);
+		writenByBox.setTextColorUneditable(10460889);
+		this.addRenderableWidget(writenByBox);
 		
-		ClearEditBox authorBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 30
-				, 70, 10, Component.translatable("messageBlock.text"));
-		authorBox.setValue("Writen By:");
+		// AUTHOR NAME TEXT
+		ClearEditBox authorBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 17
+				, 70, 10, Component.translatable("messageBlock.author"));
+		authorBox.setValue(getAuthorName(authorUUID));
 		authorBox.setEditable(false);
 		authorBox.setTextColorUneditable(10460889);
 		this.addRenderableWidget(authorBox);
+		
 	}
 
 	private void btn() {
@@ -128,7 +145,19 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		super.onClose();
 	}
 	
-	//private String getAuthorName()
+	private String getAuthorName(String uuid) {
+		HttpResponse<String> res = Communication.getReq("https://api.mojang.com/user/profile/" + uuid);
+		if(res.statusCode() != 200) {
+			player.sendSystemMessage(Component.literal(
+					"Couldn't retrieve message author username from Mojange servers").withStyle(ChatFormatting.RED));
+			
+			return "";
+		}
+		
+		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
+		return resJson.get("name").getAsString();
+		
+	}
 	
 	private int directionToInt(BlockState state) {
 		for(int i = 0; i < MessageBlock.possibleDirections.length; i++) 	
@@ -136,6 +165,23 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[i])))
 				return i;
 		return 0;
+	}
+	
+	private String getText() {
+		
+		Iterator<Message> iterator = UpdateHandler.messages.iterator();
+		while(iterator.hasNext()) {
+			Message message = iterator.next();
+			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
+			System.out.println("Message: " + pos);
+			System.out.println("Entity: " + this.menu.blockEntity.getBlockPos() + "\n");
+			if(pos.equals(this.menu.blockEntity.getBlockPos())) {
+				this.menu.blockEntity.setEditable(false);
+				authorUUID = message.getUUID();
+				return message.getText();
+			}
+		}
+		return "";
 	}
 
 }

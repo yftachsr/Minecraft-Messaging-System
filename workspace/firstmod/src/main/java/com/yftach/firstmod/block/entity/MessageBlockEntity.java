@@ -41,6 +41,8 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	private String text = "";
 	private String id = "";
 	private boolean editable = true;
+	private static int x = 0;
+	public int num;
 	
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
@@ -52,6 +54,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 
 	public MessageBlockEntity(BlockPos pPos, BlockState pBlockState) {
 		super(BlockEntities.MESSAGE_BLOCK.get(), pPos, pBlockState);
+		num = x++;
 		/*
 		 * this.data = new ContainerData() {
 		 * 
@@ -65,17 +68,18 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		 * 
 		 * @Override public int get(int pIndex) { return text; } };
 		 */
-		System.out.println("BLOCK ENTITY");
-		Iterator<Message> iterator = UpdateHandler.messages.iterator();
-		while(iterator.hasNext()) {
-			Message message = iterator.next();
-			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
-			if(pos.equals(pPos)) {
-				this.text = message.getText();
-				this.editable = false;
-				break;
-			}
-		}
+//		System.out.println("BLOCK ENTITY " + num);
+//		Iterator<Message> iterator = UpdateHandler.messages.iterator();
+//		while(iterator.hasNext()) {
+//			Message message = iterator.next();
+//			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
+//			if(pos.equals(pPos)) {
+//				this.text = message.getText();
+//				System.out.println(num + "\n" + this.text);
+//				this.editable = false;
+//				break;
+//			}
+//		}
 	}
 
 	@Override

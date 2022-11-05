@@ -53,7 +53,6 @@ public class UpdateHandler {
 	
 	private static void placeMessages(LevelAccessor level, ChunkAccess chunk) {
 		ListIterator<Message> iterator = messages.listIterator();
-		//LinkedList<Message> toAdd = new LinkedList<Message>();
 		while (iterator.hasNext()) {
 			Message message = iterator.next();
 			if(!inChunk(chunk, message))
@@ -61,23 +60,22 @@ public class UpdateHandler {
 			BlockState state = BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
 					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[message.dir]);
 			BlockPos validPos = findValidBlockPos(chunk, message);
-			iterator.remove();
-			message.setY(validPos.getY());
-			iterator.add(message);
-			System.out.println("PLACE MESSAGES 1");
-			if(chunk.getBlockState(validPos.below()).getBlock() != BlockInit.MASSAGE_BLOCK.get()) {
-				chunk.setBlockState(validPos, state, false);
-				//((MessageBlockEntity)chunk.getBlockEntity(validPos)).setText(message.getText());
+			
+			if(level.isClientSide()) {
+				iterator.remove();
+				message.setY(validPos.getY() - 1);
+				iterator.add(message);
 			}
-			System.out.println("PLACE MESSAGES 2");
+			
+			if(!level.isClientSide() && chunk.getBlockState(validPos.below()).getBlock() != BlockInit.MASSAGE_BLOCK.get())
+				chunk.setBlockState(validPos, state, false);
 		}
-		//messages.addAll(toAdd);
 	}
 	
 	private static <T extends ModSchema> BlockPos findValidBlockPos(ChunkAccess chunk, T block) {
 		BlockPos currentPos = new BlockPos(block.x, chunk.getMaxBuildHeight(), block.z);
 		while(currentPos.getY() > chunk.getMinBuildHeight()) {
-			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) 
+			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) // avoid placing messages on to of grass
 				return chunk.getBlockState(currentPos.below()).getBlock() == Blocks.GRASS 
 						? currentPos.below() : currentPos;		
 			if(chunk.getBlockState(currentPos).getBlock() != Blocks.AIR)

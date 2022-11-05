@@ -21,4 +21,8 @@ public abstract class ModSchema {
 	public double getZ() {
 		return z;
 	}
+	
+	public String getUUID() {
+		return playerUUID;
+	}
 }

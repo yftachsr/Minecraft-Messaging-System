@@ -17,11 +17,11 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   })
   .catch(err => console.log(err));
 
-server.get("/", (req,res) => {
+server.get("/messages", (req,res) => {
   console.log("GET request received");
   Message.find()
     .then(result => {
-      //console.log(result);
+      console.log(result);
       res.send(result);
     })
     .catch((err) => {

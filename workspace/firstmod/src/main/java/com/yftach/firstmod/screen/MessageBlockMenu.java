@@ -23,7 +23,7 @@ public class MessageBlockMenu extends AbstractContainerMenu {
 	private final Level level;
 
 	public MessageBlockMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-		this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));
+		this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));	
 	}
 
 	public MessageBlockMenu(int id, Inventory inv, BlockEntity entity) {
@@ -31,7 +31,6 @@ public class MessageBlockMenu extends AbstractContainerMenu {
 		checkContainerSize(inv, 1);
 		blockEntity = (MessageBlockEntity) entity;
 		this.level = inv.player.level;
-		
 		addPlayerInventory(inv);
 		addPlayerHotbar(inv);
 	     
