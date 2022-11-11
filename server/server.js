@@ -7,7 +7,7 @@ const server = express();
 
 // TO DO make environment variables for the username and password
 const uri = "mongodb+srv://yftach:y0504537324@cluster0.02ntz09.mongodb.net/DB0";
-
+const messages_route = "/messages";
 server.use(express.json());
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -17,7 +17,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   })
   .catch(err => console.log(err));
 
-server.get("/messages", (req,res) => {
+server.get(messages_route, (req,res) => {
   console.log("GET request received");
   Message.find()
     .then(result => {
@@ -29,7 +29,7 @@ server.get("/messages", (req,res) => {
     })
 });
 
-server.post('/',(req,res) => {
+server.post(messages_route,(req,res) => {
   console.log("Request Received");
   const message = new Message(req.body);
   message.save()
@@ -42,7 +42,7 @@ server.post('/',(req,res) => {
     })
 });
 
-server.put('/', (req, res) => {
+server.put(messages_route, (req, res) => {
   console.log(req.body);
   Message.findByIdAndUpdate(req.get("messageId"), req.body, {new: true})
     .then((result) => {

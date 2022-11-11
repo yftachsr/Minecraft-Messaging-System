@@ -11,6 +11,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.firstmod.FirstMod;
 import com.yftach.firstmod.block.MessageBlock;
 import com.yftach.firstmod.init.BlockInit;
+import com.yftach.firstmod.minecraftNetworking.Network;
+import com.yftach.firstmod.minecraftNetworking.packet.MessageC2SPacket;
 import com.yftach.firstmod.networking.Communication;
 import com.yftach.firstmod.screen.widgets.ClearEditBox;
 import com.yftach.firstmod.screen.widgets.TextField;
@@ -56,7 +58,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 				95, 10, Component.translatable("messageBlock.text"), this);
 		for(ClearEditBox box: textField.getRows())
 			this.addWidget(box);
-		textField.setText(getText());
+		if(this.menu.blockEntity.getText() == "")
+			initMessage();
+		textField.setText(this.menu.blockEntity.getText());
 		textField.setEditable(this.menu.blockEntity.isEditable());
 		textField.setUneditableTextColor(10460889);
 
@@ -79,7 +83,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	}
 
 	private void btn() {
-		System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+		System.out.println(this.menu.blockEntity.getID());
 	}
 
 	@Override
@@ -136,10 +140,16 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			return;
 		}
 		int dir = directionToInt(this.menu.blockEntity.getBlockState());
-		System.out.println(dir);
+		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
 		Message toSend = new Message(player.getStringUUID(), player.getName().toString(), 
-				player.getX(), player.getY(), player.getZ(), textField.getText(), dir);
-		Communication.postReq(FirstMod.SERVER_ADDRESS, new Gson().toJson(toSend));
+				messagePos.getX(), messagePos.getY(), messagePos.getZ(), textField.getText(), dir);
+		HttpResponse<String> res = Communication.postReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE,
+				new Gson().toJson(toSend));
+		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
+		String id = resJson.get("_id").getAsString();
+		System.out.println("MESSAGE ID: " + id);
+		if(player.getLevel().isClientSide())
+			Network.sendToServer(new MessageC2SPacket(id, this.menu.blockEntity.getBlockPos()));
 		this.menu.blockEntity.setEditable(false);
 		System.out.println("CLOSED");
 		super.onClose();
@@ -149,8 +159,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		HttpResponse<String> res = Communication.getReq("https://api.mojang.com/user/profile/" + uuid);
 		if(res.statusCode() != 200) {
 			player.sendSystemMessage(Component.literal(
-					"Couldn't retrieve message author username from Mojange servers").withStyle(ChatFormatting.RED));
-			
+					"Couldn't retrieve message author username from Mojange servers").withStyle(ChatFormatting.RED));	
 			return "";
 		}
 		
@@ -167,7 +176,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		return 0;
 	}
 	
-	private String getText() {
+	private void initMessage() {
 		
 		Iterator<Message> iterator = UpdateHandler.messages.iterator();
 		while(iterator.hasNext()) {
@@ -178,10 +187,10 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			if(pos.equals(this.menu.blockEntity.getBlockPos())) {
 				this.menu.blockEntity.setEditable(false);
 				authorUUID = message.getUUID();
-				return message.getText();
+				System.out.println("RETERTETRERTERTERT");
+				this.menu.blockEntity.setText(message.getText());
 			}
 		}
-		return "";
 	}
 
 }

@@ -5,7 +5,10 @@ import java.util.Iterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.yftach.firstmod.messageIdentification.IMessageIDHandler;
+import com.yftach.firstmod.messageIdentification.MessageIDHandler;
 import com.yftach.firstmod.screen.MessageBlockMenu;
+import com.yftach.firstmod.screen.Capabilities.ModCapabilities;
 import com.yftach.firstmod.updating.Message;
 import com.yftach.firstmod.updating.UpdateHandler;
 
@@ -38,15 +41,21 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		}
 	};
 	
+	private final MessageIDHandler idHandler = new MessageIDHandler() {
+		@Override
+		protected void onContentsChanged() {
+			setChanged();
+		}
+	};
+	
 	private String text = "";
-	private String id = "";
 	private boolean editable = true;
 	private static int x = 0;
 	public int num;
 	
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
-	private LazyOptional<String> lazyText = LazyOptional.empty();
+	private LazyOptional<IMessageIDHandler> lazyIdHandler = LazyOptional.empty();
 	
 	//protected final ContainerData data;
 	//private String text = "";
@@ -95,10 +104,10 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	@Override
 	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 		
-		if(cap == ForgeCapabilities.ITEM_HANDLER) {
+		if(cap == ForgeCapabilities.ITEM_HANDLER) 
 			return lazyItemHandler.cast();
-		}
-		
+		if(cap == ModCapabilities.ID_HANDLER)
+			return lazyIdHandler.cast();
 		return super.getCapability(cap, side);
 	}
 	
@@ -106,29 +115,32 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	public void onLoad() {
 		super.onLoad();
 		lazyItemHandler = LazyOptional.of(() -> itemHandler);
-		lazyText = LazyOptional.of(() -> text);
+		lazyIdHandler = LazyOptional.of(() -> idHandler);
 	}
 	
 	@Override
 	public void invalidateCaps() {
 		super.invalidateCaps();
 		lazyItemHandler.invalidate();
+		lazyIdHandler.invalidate();
 	}
 	
 	@Override
-	protected void saveAdditional(CompoundTag pTag) {
-		pTag.put("inventory", itemHandler.serializeNBT());
-		pTag.putString("text", text);
-		pTag.putBoolean("editable", editable);
-		super.saveAdditional(pTag);	
+	protected void saveAdditional(CompoundTag nbt) {
+		nbt.put("messageID", idHandler.serializeNBT());
+		nbt.put("inventory", itemHandler.serializeNBT());
+		nbt.putString("text", text);
+		nbt.putBoolean("editable", editable);
+		super.saveAdditional(nbt);	
 	}
 	
 	@Override
-	public void load(CompoundTag pTag) {
-		super.load(pTag);
-		itemHandler.deserializeNBT(pTag.getCompound("inventory"));
-		text = pTag.getString("text");
-		editable = pTag.getBoolean("editable");
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
+		idHandler.deserializeNBT(nbt.getCompound("messageID"));
+		itemHandler.deserializeNBT(nbt.getCompound("inventory"));
+		text = nbt.getString("text");
+		editable = nbt.getBoolean("editable");		
 	}
 	
 	public String getText() {
@@ -137,6 +149,14 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	public void setID(String id) {
+		this.idHandler.setID(id);
+	}
+	
+	public String getID() {
+		return this.idHandler.getID();
 	}
 	
 	public boolean isEditable() {

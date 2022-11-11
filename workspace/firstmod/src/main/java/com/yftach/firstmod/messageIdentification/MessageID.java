@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class MessageID {
 
-	private String id;
+	private String id = "";
 	
 	public String getId() {
 		return id;
