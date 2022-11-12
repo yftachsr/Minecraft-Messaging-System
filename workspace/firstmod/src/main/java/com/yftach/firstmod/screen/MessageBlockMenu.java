@@ -38,9 +38,9 @@ public class MessageBlockMenu extends AbstractContainerMenu {
 //		 	this.addSlot(new SlotItemHandler(handler, 0, 142, 14))
 //		);
 		
-		this.blockEntity.getCapability(ModCapabilities.ID_HANDLER).ifPresent(handler ->
-			this.blockEntity.setID(handler.getID())
-		);
+//		this.blockEntity.getCapability(ModCapabilities.ID_HANDLER).ifPresent(handler ->
+//			this.blockEntity.setID(handler.getID())
+//		);
 	    
 	}
 

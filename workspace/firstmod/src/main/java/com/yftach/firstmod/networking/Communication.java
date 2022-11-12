@@ -57,8 +57,8 @@ public class Communication {
         HttpResponse<String> response = null;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
-			System.out.println("status:" + response.statusCode());
-	        System.out.println("response:\n" + response.body());
+//			System.out.println("status:" + response.statusCode());
+//	        System.out.println("response:\n" + response.body());
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -85,8 +85,8 @@ public class Communication {
         HttpResponse<String> response = null;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
-			System.out.println("status:" + response.statusCode());
-	        System.out.println("response:\n" + response.body());
+//			System.out.println("status:" + response.statusCode());
+//	        System.out.println("response:\n" + response.body());
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

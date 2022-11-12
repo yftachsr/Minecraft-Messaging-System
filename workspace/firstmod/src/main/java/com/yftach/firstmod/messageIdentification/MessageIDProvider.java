@@ -39,6 +39,7 @@ public class MessageIDProvider implements ICapabilityProvider, INBTSerializable<
 
 	@Override
 	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+		System.out.println(optional.cast().isPresent());
 		if(cap == MESSAGE_ID)
 			return optional.cast();
 		return LazyOptional.empty();

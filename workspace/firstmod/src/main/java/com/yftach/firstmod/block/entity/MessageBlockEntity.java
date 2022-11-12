@@ -41,12 +41,12 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		}
 	};
 	
-	private final MessageIDHandler idHandler = new MessageIDHandler() {
-		@Override
-		protected void onContentsChanged() {
-			setChanged();
-		}
-	};
+//	private final MessageIDHandler idHandler = new MessageIDHandler() {
+//		@Override
+//		protected void onContentsChanged() {
+//			setChanged();
+//		}
+//	};
 	
 	private String text = "";
 	private boolean editable = true;
@@ -106,8 +106,8 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		
 		if(cap == ForgeCapabilities.ITEM_HANDLER) 
 			return lazyItemHandler.cast();
-		if(cap == ModCapabilities.ID_HANDLER)
-			return lazyIdHandler.cast();
+//		if(cap == ModCapabilities.ID_HANDLER)
+//			return lazyIdHandler.cast();
 		return super.getCapability(cap, side);
 	}
 	
@@ -115,19 +115,19 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	public void onLoad() {
 		super.onLoad();
 		lazyItemHandler = LazyOptional.of(() -> itemHandler);
-		lazyIdHandler = LazyOptional.of(() -> idHandler);
+		//lazyIdHandler = LazyOptional.of(() -> idHandler);
 	}
 	
 	@Override
 	public void invalidateCaps() {
 		super.invalidateCaps();
 		lazyItemHandler.invalidate();
-		lazyIdHandler.invalidate();
+		//lazyIdHandler.invalidate();
 	}
 	
 	@Override
 	protected void saveAdditional(CompoundTag nbt) {
-		nbt.put("messageID", idHandler.serializeNBT());
+		//nbt.put("messageID", idHandler.serializeNBT());
 		nbt.put("inventory", itemHandler.serializeNBT());
 		nbt.putString("text", text);
 		nbt.putBoolean("editable", editable);
@@ -137,7 +137,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	@Override
 	public void load(CompoundTag nbt) {
 		super.load(nbt);
-		idHandler.deserializeNBT(nbt.getCompound("messageID"));
+		//idHandler.deserializeNBT(nbt.getCompound("messageID"));
 		itemHandler.deserializeNBT(nbt.getCompound("inventory"));
 		text = nbt.getString("text");
 		editable = nbt.getBoolean("editable");		
@@ -151,13 +151,13 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		this.text = text;
 	}
 	
-	public void setID(String id) {
-		this.idHandler.setID(id);
-	}
+//	public void setID(String id) {
+//		this.idHandler.setID(id);
+//	}
 	
-	public String getID() {
-		return this.idHandler.getID();
-	}
+//	public String getID() {
+//		return this.idHandler.getID();
+//	}
 	
 	public boolean isEditable() {
 		return editable;

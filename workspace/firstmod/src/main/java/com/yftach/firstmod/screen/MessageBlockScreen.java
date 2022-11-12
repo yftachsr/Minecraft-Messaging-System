@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.firstmod.FirstMod;
 import com.yftach.firstmod.block.MessageBlock;
 import com.yftach.firstmod.init.BlockInit;
+import com.yftach.firstmod.messageIdentification.MessageIDProvider;
 import com.yftach.firstmod.minecraftNetworking.Network;
 import com.yftach.firstmod.minecraftNetworking.packet.MessageC2SPacket;
 import com.yftach.firstmod.networking.Communication;
@@ -83,7 +84,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	}
 
 	private void btn() {
-		System.out.println(this.menu.blockEntity.getID());
+		this.menu.blockEntity.getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
+			System.out.println(id.getId());
+		});
 	}
 
 	@Override
@@ -147,9 +150,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 				new Gson().toJson(toSend));
 		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
 		String id = resJson.get("_id").getAsString();
-		System.out.println("MESSAGE ID: " + id);
+		//System.out.println("MESSAGE ID: " + id);
 		if(player.getLevel().isClientSide())
-			Network.sendToServer(new MessageC2SPacket(id, this.menu.blockEntity.getBlockPos()));
+			Network.sendToServer(new MessageC2SPacket(id, messagePos));
 		this.menu.blockEntity.setEditable(false);
 		System.out.println("CLOSED");
 		super.onClose();
@@ -182,12 +185,11 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		while(iterator.hasNext()) {
 			Message message = iterator.next();
 			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
-			System.out.println("Message: " + pos);
-			System.out.println("Entity: " + this.menu.blockEntity.getBlockPos() + "\n");
+			//System.out.println("Message: " + pos);
+			//System.out.println("Entity: " + this.menu.blockEntity.getBlockPos() + "\n");
 			if(pos.equals(this.menu.blockEntity.getBlockPos())) {
 				this.menu.blockEntity.setEditable(false);
 				authorUUID = message.getUUID();
-				System.out.println("RETERTETRERTERTERT");
 				this.menu.blockEntity.setText(message.getText());
 			}
 		}

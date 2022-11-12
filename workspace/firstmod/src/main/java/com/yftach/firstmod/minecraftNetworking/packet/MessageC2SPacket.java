@@ -17,6 +17,7 @@ public class MessageC2SPacket {
 	public MessageC2SPacket(String id, BlockPos pos) {
 		this.uuid = id;
 		this.pos = pos;
+		System.out.println("C2S CONS: " + this.pos);
 	}
 	
 	public MessageC2SPacket(FriendlyByteBuf buf) {
@@ -31,7 +32,15 @@ public class MessageC2SPacket {
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			ServerLevel level = context.getSender().getLevel();
-			level.getBlockEntity(pos).getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
+			System.out.println("BLOCK ENTITY POS: " + this.pos);
+			try {
+				System.out.println("HOMO " + level.getBlockEntity(this.pos));
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			level.getBlockEntity(this.pos).getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
+				System.out.println("ENQUE WORK");
 				id.setId(uuid);
 			});
 		});

@@ -69,10 +69,10 @@ public class ModEvents {
 	}
 	
 	@SubscribeEvent
-	public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<BlockEntity> event) {
+	public static void onAttachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
 		if(event.getObject() instanceof MessageBlockEntity) 
-			if(!event.getObject().getCapability(MessageIDProvider.MESSAGE_ID).isPresent())
-				event.addCapability(new ResourceLocation(FirstMod.MOD_ID, "properties"), new MessageIDProvider());
+			if(!event.getObject().getCapability(MessageIDProvider.MESSAGE_ID).isPresent()) 
+				event.addCapability(new ResourceLocation(FirstMod.MOD_ID, "properties"), new MessageIDProvider());		
 	}
 	
 	@SubscribeEvent
