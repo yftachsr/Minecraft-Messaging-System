@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.yftach.firstmod.messageIdentification.IMessageIDHandler;
 import com.yftach.firstmod.messageIdentification.MessageIDHandler;
+import com.yftach.firstmod.messageIdentification.MessageIDProvider;
 import com.yftach.firstmod.screen.MessageBlockMenu;
 import com.yftach.firstmod.screen.Capabilities.ModCapabilities;
 import com.yftach.firstmod.updating.Message;

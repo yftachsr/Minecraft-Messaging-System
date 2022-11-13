@@ -22,16 +22,19 @@ public class MessageC2SPacket {
 	
 	public MessageC2SPacket(FriendlyByteBuf buf) {
 		this.uuid = buf.readUtf();
+		this.pos = buf.readBlockPos();
 	}
 	
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeUtf(uuid);
+		buf.writeBlockPos(pos);
 	}
 	
 	public boolean handle(Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			ServerLevel level = context.getSender().getLevel();
+			
 			System.out.println("BLOCK ENTITY POS: " + this.pos);
 			try {
 				System.out.println("HOMO " + level.getBlockEntity(this.pos));

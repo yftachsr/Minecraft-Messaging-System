@@ -151,8 +151,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
 		String id = resJson.get("_id").getAsString();
 		//System.out.println("MESSAGE ID: " + id);
-		if(player.getLevel().isClientSide())
-			Network.sendToServer(new MessageC2SPacket(id, messagePos));
+		
+		Network.sendToServer(new MessageC2SPacket(id, messagePos));
+		
 		this.menu.blockEntity.setEditable(false);
 		System.out.println("CLOSED");
 		super.onClose();
