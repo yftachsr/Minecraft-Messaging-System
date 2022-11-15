@@ -18,6 +18,7 @@ import com.yftach.firstmod.updating.Message;
 import com.yftach.firstmod.updating.ModSchema;
 import com.yftach.firstmod.updating.UpdateHandler;
 
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
@@ -91,16 +92,25 @@ public class ModEvents {
 //		System.out.println("Screen: " + event.getScreen());
 //		System.out.println("is messageblockscreen: " + MessageBlockScreen.isOpen());
 //		if(MessageBlockScreen.isOpen() && (event.getScreen() instanceof InventoryScreen
-//				|| event.getScreen() instanceof CreativeModeInventoryScreen))
+//				|| event.getScreen() instanceof CreativeModeInventoryScreen
+//				|| event.getScreen() instanceof PauseScreen))
 //			event.setCanceled(true);
 //	}
+	
+	@SubscribeEvent
+	public static void onScreenOpening(ScreenEvent.Opening event) {
+		System.out.println("\nScreen: " + event.getScreen());
+		System.out.println("New screen: " + event.getNewScreen() + "\n");
+		//System.out.println("is messageblockscreen: " + MessageBlockScreen.isOpen());
+		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
+				|| event.getNewScreen() instanceof CreativeModeInventoryScreen
+				|| event.getNewScreen() instanceof PauseScreen))
+			event.setCanceled(true);
+	}
 	
 //	@SubscribeEvent
-//	public static void onScreenOpening(ScreenEvent.Opening event) {
-//		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
-//				|| event.getNewScreen() instanceof CreativeModeInventoryScreen))
+//	public static void onKeyPressed(ScreenEvent.KeyPressed.Pre event) {
+//		if(event.getKeyCode() == 256 && event.getScreen() instanceof MessageBlockScreen)
 //			event.setCanceled(true);
 //	}
-	
-	
 }

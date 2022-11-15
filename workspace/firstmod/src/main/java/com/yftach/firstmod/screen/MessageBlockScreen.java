@@ -46,13 +46,15 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 
 	public MessageBlockScreen(MessageBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
 		super(pMenu, pPlayerInventory, pTitle);
-		player = pPlayerInventory.player;
+		open = true;
+		player = pPlayerInventory.player;	
 	}
 
 	@Override
 	protected void init() {
+		open = true;
 		super.init();
-		
+		//System.out.println("OPEN: " + open);
 		this.addRenderableWidget(new Button(100, 100, 20, 20, CommonComponents.GUI_DONE, (p_169820_) -> {
 			this.btn();
 		}));
@@ -81,10 +83,11 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		// AUTHOR NAME TEXT
 		ClearEditBox authorBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 17
 				, 70, 10, Component.translatable("messageBlock.author"));
-		if(this.menu.blockEntity.getAuthorName() == "")// && this.menu.blockEntity.getFindAuthorName())
+		if(this.menu.blockEntity.getAuthorName() == "" && this.menu.blockEntity.getFindAuthorName())
 			authorName = getAuthorName(authorUUID);
 		else
 			authorName = this.menu.blockEntity.getAuthorName();
+		this.menu.blockEntity.setFindAuthorName(true);
 		authorBox.setValue(authorName);
 		authorBox.setEditable(false);
 		authorBox.setTextColorUneditable(10460889);
@@ -117,8 +120,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		renderBackground(pPoseStack);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 		renderTooltip(pPoseStack, pMouseX, pMouseY);
-		textField.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-		open = true;
+		textField.render(pPoseStack, pMouseX, pMouseY, pPartialTick);	
 	}
 
 	@Override
@@ -146,9 +148,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		textField.keyPressed(pKeyCode, pScanCode, pModifiers);
 		String currentText = textField.getText();
 		this.menu.blockEntity.setText(currentText);
-		if(init) {	
-			minecraft.forceSetScreen(this);
+		if(init) {
 			this.menu.blockEntity.setFindAuthorName(false);
+			minecraft.forceSetScreen(this);
 			this.menu.blockEntity.setText(currentText);
 		}
 			
