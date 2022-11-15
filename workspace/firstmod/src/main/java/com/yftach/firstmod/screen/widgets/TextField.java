@@ -78,8 +78,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		return true;
 	}
 	
-	public void setText(String text) {
-		
+	public void setText(String text) {	
 		for(ClearEditBox box: textBoxes) {
 			int index = text.indexOf("\n");
 			if(index <= MAX_ROW_LENGTH && index > -1) {
@@ -112,13 +111,10 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 				setFocus(focusedRow + 1);
 				textBoxes.get(focusedRow - 1).moveCursorToStart();
 				setCursorPos(focusedRow, 1);
-			}
-			else {
+			} else {
 				textBoxes.get(focusedRow).moveCursorToStart();
 				setCursorPos(focusedRow, cursorPos);
-			}
-			
-			
+			}	
 		}
 	
 		return true;
@@ -198,7 +194,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	}
 	
 	/**
-	 * Handles recursively the situation where the line is full by streaming 
+	 * Handles recursively the situation where the line is full by flooding 
 	 * the text to the next rows
 	 * @param row - the full row
 	 */
@@ -264,7 +260,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	 * Sets the focused row
 	 * @param row - row to focus
 	 */
-	private void setFocus(int row) {
+	public void setFocus(int row) {
 
 		if(row < textBoxes.size() && row >= 0)
 			focusedRow = row;
@@ -283,6 +279,10 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		transfer = textBoxes.get(focusedRow).getCursorPosition() == 0 && focusedRow != 0;
 		lineFull = textBoxes.get(focusedRow).getValue().length() >= MAX_ROW_LENGTH;
 			
+	}
+	
+	public int getFocusedRow() {
+		return focusedRow;
 	}
 	
 	@Override
@@ -307,7 +307,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		return true;
 	}
 	
-	private void setCursorPos(int row, int pos) {
+	public void setCursorPos(int row, int pos) {
 		textBoxes.get(row).setCursorPosition(pos);
 		textBoxes.get(row).setHighlightPos(pos);
 	}

@@ -49,11 +49,9 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 //		}
 //	};
 	
-	private String text = "";
-	private boolean editable = true;
-	private static int x = 0;
-	public int num;
-	
+	private String text = "", authorName = "";
+	private boolean editable = true, findAuthorName = true;
+	private int focusedRow = 0, cursorPos = 0;
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 	private LazyOptional<IMessageIDHandler> lazyIdHandler = LazyOptional.empty();
@@ -64,7 +62,6 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 
 	public MessageBlockEntity(BlockPos pPos, BlockState pBlockState) {
 		super(BlockEntities.MESSAGE_BLOCK.get(), pPos, pBlockState);
-		num = x++;
 		/*
 		 * this.data = new ContainerData() {
 		 * 
@@ -132,6 +129,10 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		nbt.put("inventory", itemHandler.serializeNBT());
 		nbt.putString("text", text);
 		nbt.putBoolean("editable", editable);
+		nbt.putInt("cursor", cursorPos);
+		nbt.putInt("row", focusedRow);
+		nbt.putString("author", authorName);
+		nbt.putBoolean("get_name", findAuthorName);
 		super.saveAdditional(nbt);	
 	}
 	
@@ -141,7 +142,11 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		//idHandler.deserializeNBT(nbt.getCompound("messageID"));
 		itemHandler.deserializeNBT(nbt.getCompound("inventory"));
 		text = nbt.getString("text");
-		editable = nbt.getBoolean("editable");		
+		editable = nbt.getBoolean("editable");
+		cursorPos = nbt.getInt("cursor");
+		focusedRow = nbt.getInt("row");
+		authorName = nbt.getString("author");
+		findAuthorName = nbt.getBoolean("get_name");
 	}
 	
 	public String getText() {
@@ -150,6 +155,38 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	public int getFocusedRow() {
+		return focusedRow;
+	}
+	
+	public void setFocusedRow(int row) {
+		this.focusedRow = row;
+	}
+	
+	public int getCusorPos() {
+		return cursorPos;
+	}
+	
+	public void setCursorPos(int pos) {
+		this.cursorPos = pos;
+	}
+	
+	public String getAuthorName() {
+		return authorName;
+	}
+	
+	public void setAuthorName(String name) {
+		this.authorName = name;
+	}
+	
+	public boolean getFindAuthorName() {
+		return findAuthorName;
+	}
+	
+	public void setFindAuthorName(boolean find) {
+		this.findAuthorName = find;
 	}
 	
 //	public void setID(String id) {

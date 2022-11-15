@@ -30,7 +30,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
  */
 public class UpdateHandler {
 	
-	public static LinkedList<Message> messages;
+	public static LinkedList<Message> messages = new LinkedList<Message>();
 
 	/**
 	 * Converts a string in JSON format into a linked list <br>
@@ -44,7 +44,7 @@ public class UpdateHandler {
 		return gson.fromJson(jsonString, messageListType);
 	}
 	
-	public static void placeEntites(LinkedList<Message> schemas, LevelAccessor level, ChunkAccess chunk) {
+	public static void placeEntites(LevelAccessor level, ChunkAccess chunk) {
 	
 			
 		placeMessages(level, chunk);
@@ -75,7 +75,7 @@ public class UpdateHandler {
 	private static <T extends ModSchema> BlockPos findValidBlockPos(ChunkAccess chunk, T block) {
 		BlockPos currentPos = new BlockPos(block.x, chunk.getMaxBuildHeight(), block.z);
 		while(currentPos.getY() > chunk.getMinBuildHeight()) {
-			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) // avoid placing messages on to of grass
+			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) // avoid placing messages on top of grass
 				return chunk.getBlockState(currentPos.below()).getBlock() == Blocks.GRASS 
 						? currentPos.below() : currentPos;		
 			if(chunk.getBlockState(currentPos).getBlock() != Blocks.AIR)

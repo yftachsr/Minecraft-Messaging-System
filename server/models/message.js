@@ -7,7 +7,7 @@ const messageSchema = new Schema({
         type: String,
         required: true
     },
-    playerName: {
+    id: {
         type: String,
         required: true
     },

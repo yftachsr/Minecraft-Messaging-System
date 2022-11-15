@@ -2,6 +2,7 @@ package com.yftach.firstmod.minecraftNetworking;
 
 import com.yftach.firstmod.FirstMod;
 import com.yftach.firstmod.minecraftNetworking.packet.MessageC2SPacket;
+import com.yftach.firstmod.minecraftNetworking.packet.MessageS2CPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +34,12 @@ public class Network {
 				.encoder(MessageC2SPacket::toBytes)
 				.consumerMainThread(MessageC2SPacket::handle)
 				.add();
+		
+		net.messageBuilder(MessageS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+		.decoder(MessageS2CPacket::new)
+		.encoder(MessageS2CPacket::toBytes)
+		.consumerMainThread(MessageS2CPacket::handle)
+		.add();
 	}
 	
 	public static <MSG> void sendToServer(MSG message) {

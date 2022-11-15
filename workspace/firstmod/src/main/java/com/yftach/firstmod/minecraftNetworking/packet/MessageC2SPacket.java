@@ -3,6 +3,7 @@ package com.yftach.firstmod.minecraftNetworking.packet;
 import java.util.function.Supplier;
 
 import com.yftach.firstmod.messageIdentification.MessageIDProvider;
+import com.yftach.firstmod.minecraftNetworking.Network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +18,6 @@ public class MessageC2SPacket {
 	public MessageC2SPacket(String id, BlockPos pos) {
 		this.uuid = id;
 		this.pos = pos;
-		System.out.println("C2S CONS: " + this.pos);
 	}
 	
 	public MessageC2SPacket(FriendlyByteBuf buf) {
@@ -33,19 +33,14 @@ public class MessageC2SPacket {
 	public boolean handle(Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			ServerLevel level = context.getSender().getLevel();
-			
+			ServerLevel level = context.getSender().getLevel();	
 			System.out.println("BLOCK ENTITY POS: " + this.pos);
-			try {
-				System.out.println("HOMO " + level.getBlockEntity(this.pos));
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
 			
 			level.getBlockEntity(this.pos).getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
 				System.out.println("ENQUE WORK");
 				id.setId(uuid);
 			});
+			//Network.sendToPlayer(new MessageS2CPacket(uuid, pos), context.getSender());
 		});
 		return true;
 	}

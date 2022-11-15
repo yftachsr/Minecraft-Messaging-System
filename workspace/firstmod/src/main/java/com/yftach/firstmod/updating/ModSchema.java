@@ -2,7 +2,7 @@ package com.yftach.firstmod.updating;
 
 
 public abstract class ModSchema {
-	protected String playerUUID, playerName;
+	protected String playerUUID, id;
 	protected double x, y, z;
 	protected int dir;
 	

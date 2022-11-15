@@ -5,10 +5,10 @@ public class Message extends ModSchema{
 	
 	private String text;
 	
-	public Message(String playerUUID, String playerName, double x, double y, double z,
+	public Message(String playerUUID, String id, double x, double y, double z,
 			String text, int dir) {
 		this.playerUUID = playerUUID;
-		this.playerName = playerName;
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;

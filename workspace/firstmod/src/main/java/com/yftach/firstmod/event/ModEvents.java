@@ -13,10 +13,13 @@ import com.yftach.firstmod.init.BlockInit;
 import com.yftach.firstmod.messageIdentification.MessageID;
 import com.yftach.firstmod.messageIdentification.MessageIDProvider;
 import com.yftach.firstmod.networking.Communication;
+import com.yftach.firstmod.screen.MessageBlockScreen;
 import com.yftach.firstmod.updating.Message;
 import com.yftach.firstmod.updating.ModSchema;
 import com.yftach.firstmod.updating.UpdateHandler;
 
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -37,6 +41,8 @@ import net.minecraftforge.fml.common.Mod;
 public class ModEvents {
 	
 	private static int worldage = 0;
+	private static boolean messageBlockScreen = false;
+	private static char lastChar;
 	
 	@SubscribeEvent
 	public static void tick(TickEvent.LevelTickEvent event) {
@@ -60,7 +66,7 @@ public class ModEvents {
 	@SubscribeEvent
 	public static void loadChunkMessages(ChunkEvent.Load event) {
 		if(UpdateHandler.messages != null && UpdateHandler.messages.size() > 0)
-			UpdateHandler.placeEntites(UpdateHandler.messages, event.getLevel(), event.getChunk());
+			UpdateHandler.placeEntites(event.getLevel(), event.getChunk());
 	}
 	
 	@SubscribeEvent
@@ -80,6 +86,21 @@ public class ModEvents {
 		event.register(MessageID.class);
 	}
 	
+//	@SubscribeEvent
+//	public static void cancelScreen(ScreenEvent.Init.Pre event) {
+//		System.out.println("Screen: " + event.getScreen());
+//		System.out.println("is messageblockscreen: " + MessageBlockScreen.isOpen());
+//		if(MessageBlockScreen.isOpen() && (event.getScreen() instanceof InventoryScreen
+//				|| event.getScreen() instanceof CreativeModeInventoryScreen))
+//			event.setCanceled(true);
+//	}
+	
+//	@SubscribeEvent
+//	public static void onScreenOpening(ScreenEvent.Opening event) {
+//		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
+//				|| event.getNewScreen() instanceof CreativeModeInventoryScreen))
+//			event.setCanceled(true);
+//	}
 	
 	
 }
