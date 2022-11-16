@@ -44,7 +44,7 @@ server.post(messages_route,(req,res) => {
 
 server.put(messages_route, (req, res) => {
   console.log(req.body);
-  Message.findByIdAndUpdate(req.get("messageId"), req.body, {new: true})
+  Message.findByIdAndUpdate(req.get("_id"), req.body, {new: true})
     .then((result) => {
       res.send(result);
       console.log(result);

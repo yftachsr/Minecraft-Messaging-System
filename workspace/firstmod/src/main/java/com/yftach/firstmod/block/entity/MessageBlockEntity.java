@@ -49,9 +49,9 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 //		}
 //	};
 	
-	private String text = "", authorName = "";
+	private String text = "", authorName = "", id = "";
 	private boolean editable = true, findAuthorName = true;
-	private int focusedRow = 0, cursorPos = 0;
+	private int focusedRow = 0, cursorPos = 0, likes = 0;
 	
 	private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 	private LazyOptional<IMessageIDHandler> lazyIdHandler = LazyOptional.empty();
@@ -133,6 +133,8 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		nbt.putInt("row", focusedRow);
 		nbt.putString("author", authorName);
 		nbt.putBoolean("get_name", findAuthorName);
+		nbt.putString("id", id);
+		nbt.putInt("likes", likes);
 		super.saveAdditional(nbt);	
 	}
 	
@@ -147,6 +149,8 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		focusedRow = nbt.getInt("row");
 		authorName = nbt.getString("author");
 		findAuthorName = nbt.getBoolean("get_name");
+		id = nbt.getString("id");
+		likes = nbt.getInt("likes");
 	}
 	
 	public String getText() {
@@ -189,6 +193,21 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		this.findAuthorName = find;
 	}
 	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public int getLikes() {
+		return likes;
+	}
+	
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
 //	public void setID(String id) {
 //		this.idHandler.setID(id);
 //	}

@@ -38,11 +38,13 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(FirstMod.MOD_ID,
 			"textures/gui/message_block_gui.png");
+	private final int uneditableColor = 10460889;
 
 	private TextField textField;
 	private Player player;
 	private String authorUUID, authorName;
 	private static boolean open = false; 
+	private boolean commit = true;
 
 	public MessageBlockScreen(MessageBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
 		super(pMenu, pPlayerInventory, pTitle);
@@ -54,10 +56,10 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	protected void init() {
 		open = true;
 		super.init();
-		//System.out.println("OPEN: " + open);
 		this.addRenderableWidget(new Button(100, 100, 20, 20, CommonComponents.GUI_DONE, (p_169820_) -> {
 			this.btn();
 		}));
+		
 		// TEXT FIELD
 		textField = new TextField(5, this.font, this.width / 2 - 73, this.height / 3 - 25, 
 				95, 10, Component.translatable("messageBlock.text"), this);
@@ -68,7 +70,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			
 		textField.setText(this.menu.blockEntity.getText());
 		textField.setEditable(this.menu.blockEntity.isEditable());
-		textField.setUneditableTextColor(10460889);
+		textField.setUneditableTextColor(uneditableColor);
 		textField.setFocus(this.menu.blockEntity.getFocusedRow());
 		textField.setCursorPos(this.menu.blockEntity.getFocusedRow(), this.menu.blockEntity.getCusorPos());
 		
@@ -77,7 +79,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 				, 70, 10, Component.translatable("messageBlock.writen"));
 		writenByBox.setValue("Writen By:");
 		writenByBox.setEditable(false);
-		writenByBox.setTextColorUneditable(10460889);
+		writenByBox.setTextColorUneditable(uneditableColor);
 		this.addRenderableWidget(writenByBox);
 		
 		// AUTHOR NAME TEXT
@@ -90,18 +92,33 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		this.menu.blockEntity.setFindAuthorName(true);
 		authorBox.setValue(authorName);
 		authorBox.setEditable(false);
-		authorBox.setTextColorUneditable(10460889);
+		authorBox.setTextColorUneditable(uneditableColor);
 		this.addRenderableWidget(authorBox);
-			
+		
+		// LIKES COUNTER
+		ClearEditBox likesCounter = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 2 - 10,
+				50, 10, Component.translatable("messageBlock.likes"));
+		likesCounter.setValue("" + this.menu.blockEntity.getLikes());
+		likesCounter.setEditable(false);
+		likesCounter.setTextColorUneditable(uneditableColor);
+		this.addRenderableWidget(likesCounter);
+		
 	}
 
 	private void btn() {
-		player.level.getBlockEntity(this.menu.blockEntity.getBlockPos()).getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
-			System.out.println(id.getId());
-		});
+//		player.level.getBlockEntity(this.menu.blockEntity.getBlockPos()).getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
+//			System.out.println(id.getId());
+//		});
 //		this.menu.blockEntity.getCapability(MessageIDProvider.MESSAGE_ID).ifPresent(id -> {
 //			System.out.println(id.getId());
 //		});
+		int dir = directionToInt(this.menu.blockEntity.getBlockState());
+		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
+		Message toSend = new Message(player.getStringUUID(), this.menu.blockEntity.getId(),
+				messagePos.getX(), messagePos.getY(), messagePos.getZ(),
+				textField.getText(), dir, this.menu.blockEntity.getLikes() + 1);
+		Communication.putReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE,
+				new Gson().toJson(toSend));
 	}
 
 	@Override
@@ -135,15 +152,13 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-		//System.out.println(pKeyCode);
+		System.out.println(pKeyCode);
 		boolean init = false;
-		if(pKeyCode == 69) 
+		if(pKeyCode == 69) { // 'e' = 69
+			commit = false;
 			init = true;
-		
-		if (pKeyCode == 256) {
-	         this.minecraft.forceSetScreen(null);
-	    }
-		
+		}
+			
 		super.keyPressed(pKeyCode, pScanCode, pModifiers);
 		textField.keyPressed(pKeyCode, pScanCode, pModifiers);
 		String currentText = textField.getText();
@@ -153,7 +168,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			minecraft.forceSetScreen(this);
 			this.menu.blockEntity.setText(currentText);
 		}
-			
+		
 		return false;
 	}
 	
@@ -165,29 +180,31 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	
 	@Override
 	public void onClose() {
-		open = false;
-		if(textField.isEmpty() || !this.menu.blockEntity.isEditable()) {
+		
+		this.menu.blockEntity.setFocusedRow(textField.getFocusedRow());
+		this.menu.blockEntity.setCursorPos(textField.getRows().get(textField.getFocusedRow()).getCursorPosition());
+		if(!commit || textField.isEmpty() || !this.menu.blockEntity.isEditable()) {
+			commit = true;
 			super.onClose();
 			return;
 		}
-		this.menu.blockEntity.setFocusedRow(textField.getFocusedRow());
-		this.menu.blockEntity.setCursorPos(textField.getRows().get(textField.getFocusedRow()).getCursorPosition());
+		
 		this.menu.blockEntity.setAuthorName(authorName);
-		//this.menu.blockEntity.setFindAuthorName(true);
-//		int dir = directionToInt(this.menu.blockEntity.getBlockState());
-//		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
-//		Message toSend = new Message(player.getStringUUID(), player.getName().toString(), 
-//				messagePos.getX(), messagePos.getY(), messagePos.getZ(), textField.getText(), dir);
-//		HttpResponse<String> res = Communication.postReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE,
-//				new Gson().toJson(toSend));
-//		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
-//		String id = resJson.get("_id").getAsString();
-//		//System.out.println("MESSAGE ID: " + id);
-//		
-//		Network.sendToServer(new MessageC2SPacket(id, messagePos));
-//		
-//		this.menu.blockEntity.setEditable(false);
-//		System.out.println("CLOSED");
+		this.menu.blockEntity.setEditable(false);
+		int dir = directionToInt(this.menu.blockEntity.getBlockState());
+		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
+		Message toSend = new Message(player.getStringUUID(), 
+				messagePos.getX(), messagePos.getY(), messagePos.getZ(), textField.getText(), dir, 0);
+		HttpResponse<String> res = Communication.postReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE,
+				new Gson().toJson(toSend));
+		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
+		String id = resJson.get("_id").getAsString();
+		//System.out.println("MESSAGE ID: " + id);
+		
+		//Network.sendToServer(new MessageC2SPacket(id, messagePos));
+		
+		
+		System.out.println("CLOSED");
 		super.onClose();
 	}
 	
@@ -213,7 +230,6 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	}
 	
 	private void initMessage() {
-		
 		Iterator<Message> iterator = UpdateHandler.messages.iterator();
 		while(iterator.hasNext()) {
 			Message message = iterator.next();
@@ -223,6 +239,8 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			if(pos.equals(this.menu.blockEntity.getBlockPos())) {
 				this.menu.blockEntity.setEditable(false);
 				authorUUID = message.getUUID();
+				this.menu.blockEntity.setLikes(message.getLikes());
+				this.menu.blockEntity.setId(message.getId());
 				this.menu.blockEntity.setText(message.getText());
 			}
 		}
@@ -230,6 +248,10 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	
 	public static boolean isOpen() {
 		return open;
+	}
+	
+	public static void setOpen(boolean isOpen) {
+		open  = isOpen;
 	}
 
 }

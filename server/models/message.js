@@ -9,7 +9,7 @@ const messageSchema = new Schema({
     },
     id: {
         type: String,
-        required: true
+        required: false
     },
     x: {
         type: Number,
@@ -28,6 +28,10 @@ const messageSchema = new Schema({
         required: false
     },
     dir: {
+        type: Number,
+        required: true
+    },
+    likes: {
         type: Number,
         required: true
     }

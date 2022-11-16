@@ -2,6 +2,7 @@ package com.yftach.firstmod.event;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.text.html.parser.Entity;
@@ -18,12 +19,15 @@ import com.yftach.firstmod.updating.Message;
 import com.yftach.firstmod.updating.ModSchema;
 import com.yftach.firstmod.updating.UpdateHandler;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -53,7 +57,12 @@ public class ModEvents {
 			if(response != null && response.statusCode() == 200) { 
 				LinkedList<Message> list = UpdateHandler.toArrayList(response.body());
 				UpdateHandler.messages.addAll(list.subList(UpdateHandler.messages.size(), list.size()));
+			} else {
+				for(Player player: event.level.players()) 
+					player.sendSystemMessage(
+							Component.literal("Couldn't retrive messages from the database").withStyle(ChatFormatting.RED));		
 			}
+			//System.out.println(UpdateHandler.messages);
 		}
 	}
 	
@@ -87,30 +96,15 @@ public class ModEvents {
 		event.register(MessageID.class);
 	}
 	
-//	@SubscribeEvent
-//	public static void cancelScreen(ScreenEvent.Init.Pre event) {
-//		System.out.println("Screen: " + event.getScreen());
-//		System.out.println("is messageblockscreen: " + MessageBlockScreen.isOpen());
-//		if(MessageBlockScreen.isOpen() && (event.getScreen() instanceof InventoryScreen
-//				|| event.getScreen() instanceof CreativeModeInventoryScreen
-//				|| event.getScreen() instanceof PauseScreen))
-//			event.setCanceled(true);
-//	}
-	
 	@SubscribeEvent
 	public static void onScreenOpening(ScreenEvent.Opening event) {
-		System.out.println("\nScreen: " + event.getScreen());
-		System.out.println("New screen: " + event.getNewScreen() + "\n");
-		//System.out.println("is messageblockscreen: " + MessageBlockScreen.isOpen());
 		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
 				|| event.getNewScreen() instanceof CreativeModeInventoryScreen
-				|| event.getNewScreen() instanceof PauseScreen))
+				|| event.getNewScreen() instanceof PauseScreen)) {
 			event.setCanceled(true);
+			MessageBlockScreen.setOpen(false);
+		}
+			
 	}
 	
-//	@SubscribeEvent
-//	public static void onKeyPressed(ScreenEvent.KeyPressed.Pre event) {
-//		if(event.getKeyCode() == 256 && event.getScreen() instanceof MessageBlockScreen)
-//			event.setCanceled(true);
-//	}
 }

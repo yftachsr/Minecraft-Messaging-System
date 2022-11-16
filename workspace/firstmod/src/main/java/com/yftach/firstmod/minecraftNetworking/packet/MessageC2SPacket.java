@@ -40,7 +40,7 @@ public class MessageC2SPacket {
 				System.out.println("ENQUE WORK");
 				id.setId(uuid);
 			});
-			//Network.sendToPlayer(new MessageS2CPacket(uuid, pos), context.getSender());
+			Network.sendToPlayer(new MessageS2CPacket(uuid, pos), context.getSender());
 		});
 		return true;
 	}
