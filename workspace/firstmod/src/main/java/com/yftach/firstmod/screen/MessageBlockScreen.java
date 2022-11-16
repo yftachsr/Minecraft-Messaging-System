@@ -153,17 +153,17 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		System.out.println(pKeyCode);
-		boolean init = false;
+		boolean forceScreen = false;
 		if(pKeyCode == 69) { // 'e' = 69
 			commit = false;
-			init = true;
+			forceScreen = true;
 		}
 			
 		super.keyPressed(pKeyCode, pScanCode, pModifiers);
 		textField.keyPressed(pKeyCode, pScanCode, pModifiers);
 		String currentText = textField.getText();
 		this.menu.blockEntity.setText(currentText);
-		if(init) {
+		if(forceScreen) {
 			this.menu.blockEntity.setFindAuthorName(false);
 			minecraft.forceSetScreen(this);
 			this.menu.blockEntity.setText(currentText);
@@ -183,7 +183,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		
 		this.menu.blockEntity.setFocusedRow(textField.getFocusedRow());
 		this.menu.blockEntity.setCursorPos(textField.getRows().get(textField.getFocusedRow()).getCursorPosition());
-		if(!commit || textField.isEmpty() || !this.menu.blockEntity.isEditable()) {
+		if(!commit || textField.isEmpty() || !this.menu.blockEntity.isEditable()) { // not a new message
 			commit = true;
 			super.onClose();
 			return;
