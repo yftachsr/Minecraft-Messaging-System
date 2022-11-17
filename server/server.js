@@ -21,7 +21,7 @@ server.get(messages_route, (req,res) => {
   console.log("GET request received");
   Message.find()
     .then(result => {
-      console.log(result);
+      //console.log(result);
       res.send(result);
     })
     .catch((err) => {
@@ -35,7 +35,7 @@ server.post(messages_route,(req,res) => {
   message.save()
     .then((result) => {
         res.send(result);
-        console.log(result);
+       //console.log(result);
     })
     .catch((err) => {
       console.log(err);
@@ -44,7 +44,8 @@ server.post(messages_route,(req,res) => {
 
 server.put(messages_route, (req, res) => {
   console.log(req.body);
-  Message.findByIdAndUpdate(req.get("_id"), req.body, {new: true})
+  console.log(JSON.parse(JSON.stringify(req.body))['_id']);
+  Message.findByIdAndUpdate(JSON.parse(JSON.stringify(req.body))['_id'], req.body, {new: true})
     .then((result) => {
       res.send(result);
       console.log(result);

@@ -45,14 +45,14 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = FirstMod.MOD_ID)
 public class ModEvents {
 	
+	private final static int FREQUENCY = 1500;
 	private static int worldage = 0;
-	private static boolean messageBlockScreen = false;
-	private static char lastChar;
+
 	
 	@SubscribeEvent
 	public static void tick(TickEvent.LevelTickEvent event) {
 		worldage++;
-		if(worldage % 1500 == 0) {
+		if(worldage % FREQUENCY == 0) {
 			HttpResponse<String> response = Communication.getReq(FirstMod.SERVER_ADDRESS + FirstMod.MESSAGES_ROUTE);
 			if(response != null && response.statusCode() == 200) { 
 				LinkedList<Message> list = UpdateHandler.toArrayList(response.body());
@@ -81,7 +81,8 @@ public class ModEvents {
 	
 	@SubscribeEvent
 	public static void messageBreak(BlockEvent.BreakEvent event) {
-		//event.setCanceled(true);
+		if(event.getState().getBlock() instanceof MessageBlock)
+			event.setCanceled(true);
 	}
 	
 	@SubscribeEvent
