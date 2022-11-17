@@ -25,12 +25,12 @@ import net.minecraftforge.fml.common.Mod;
 public class ModEvents {
 	
 	private final static int FREQUENCY = 1500;
-	private static int worldage = 0;
+	private static int updateCounter = 0;
 	
 	@SubscribeEvent
 	public static void tick(TickEvent.LevelTickEvent event) {
-		worldage++;
-		if(worldage % FREQUENCY == 0) {
+		updateCounter++;
+		if(updateCounter % FREQUENCY == 0) {
 			HttpResponse<String> response = Communication.getReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE);
 			if(response != null && response.statusCode() == 200) { 
 				UpdateHandler.messages.addAll(UpdateHandler.toArrayList(response.body()));
@@ -39,12 +39,15 @@ public class ModEvents {
 					player.sendSystemMessage(
 							Component.literal("Couldn't retrive messages from the database").withStyle(ChatFormatting.RED));		
 			}
-			System.out.println(UpdateHandler.messages);
+			updateCounter = 1; // To avoid reaching gigantic numbers
+			//System.out.println(UpdateHandler.messages);
 		}
 	}
 	
 	@SubscribeEvent
 	public static void initMessages(LevelEvent.Load event) {
+		if(event.getLevel().isClientSide())
+			return;
 		HttpResponse<String> response = Communication.getReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE);
 		if(response != null && response.statusCode() == 200)
 			UpdateHandler.messages = UpdateHandler.toArrayList(response.body());
@@ -68,7 +71,6 @@ public class ModEvents {
 			event.setCanceled(true);
 			MessageBlockScreen.setToCancel(false);
 		}
-		
 		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
 				|| event.getNewScreen() instanceof CreativeModeInventoryScreen
 				|| event.getNewScreen() instanceof PauseScreen)) {
