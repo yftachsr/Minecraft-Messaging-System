@@ -1,12 +1,11 @@
-const http = require('http');
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Message = require('./models/message');
 const express = require('express');
 
 const server = express();
 
-// TO DO make environment variables for the username and password
-const uri = "mongodb+srv://yftach:y0504537324@cluster0.02ntz09.mongodb.net/DB0";
+const uri = "mongodb+srv://" + process.env.DATABASE_USERNAME + ":" + process.env.DATABASE_PASSWORD + "@cluster0.02ntz09.mongodb.net/DB0";
 const messages_route = "/messages";
 server.use(express.json());
 
