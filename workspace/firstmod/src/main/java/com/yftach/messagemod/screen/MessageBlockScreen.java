@@ -3,16 +3,12 @@ package com.yftach.messagemod.screen;
 import java.net.http.HttpResponse;
 import java.util.Iterator;
 
-import org.openjdk.nashorn.internal.parser.JSONParser;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.messagemod.MessagingSystemMod;
 import com.yftach.messagemod.block.MessageBlock;
-import com.yftach.messagemod.event.ModEvents;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.widgets.ClearEditBox;
@@ -43,11 +39,14 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	private static boolean open = false; 
 	private boolean commit = true;
 	private ClearEditBox likesCounter;
+	private static boolean cancel = false;
 
 	public MessageBlockScreen(MessageBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
 		super(pMenu, pPlayerInventory, pTitle);
 		open = true;
-		player = pPlayerInventory.player;	
+		player = pPlayerInventory.player;
+		if(this.menu.blockEntity == null)
+			cancel = true;
 	}
 
 	@Override
@@ -213,12 +212,10 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 					"Couldn't update the database! Try to re-enter and exit the message.").withStyle(ChatFormatting.RED));
 		else {	
 			this.menu.blockEntity.setEditable(false);
-			String id = new Gson().fromJson(res.body(), JsonObject.class).get("_id").getAsString();
-			this.menu.blockEntity.setId(id);
+			this.menu.blockEntity.setId(new Gson().fromJson(res.body(), JsonObject.class).get("_id").getAsString());
 			
 		}
 			
-		
 		super.onClose();
 	}
 	
@@ -230,9 +227,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			return "";
 		}
 		
-		JsonObject resJson = JsonParser.parseString(res.body()).getAsJsonObject();
-		return resJson.get("name").getAsString();
-		
+		return new Gson().fromJson(res.body(), JsonObject.class).get("name").getAsString();	
 	}
 	
 	private int directionToInt(BlockState state) {
@@ -264,6 +259,14 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	
 	public static void setOpen(boolean isOpen) {
 		open  = isOpen;
+	}
+	
+	public static boolean toCancel() {
+		return cancel;
+	}
+	
+	public static void setToCancel(boolean toCancel) {
+		cancel = toCancel;
 	}
 	
 	private boolean shouldCommit() {

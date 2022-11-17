@@ -1,14 +1,10 @@
 package com.yftach.messagemod.event;
 
 import java.net.http.HttpResponse;
-import java.util.HashSet;
-import java.util.LinkedList;
 
 import com.yftach.messagemod.MessagingSystemMod;
-import com.yftach.messagemod.block.MessageBlock;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.MessageBlockScreen;
-import com.yftach.messagemod.updating.Message;
 import com.yftach.messagemod.updating.UpdateHandler;
 
 import net.minecraft.ChatFormatting;
@@ -68,6 +64,11 @@ public class ModEvents {
 	
 	@SubscribeEvent
 	public static void onScreenOpening(ScreenEvent.Opening event) {
+		if(event.getNewScreen() instanceof MessageBlockScreen && MessageBlockScreen.toCancel()) {
+			event.setCanceled(true);
+			MessageBlockScreen.setToCancel(false);
+		}
+		
 		if(MessageBlockScreen.isOpen() && (event.getNewScreen() instanceof InventoryScreen
 				|| event.getNewScreen() instanceof CreativeModeInventoryScreen
 				|| event.getNewScreen() instanceof PauseScreen)) {

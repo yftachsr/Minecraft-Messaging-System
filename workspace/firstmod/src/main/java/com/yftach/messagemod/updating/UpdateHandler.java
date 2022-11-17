@@ -3,9 +3,6 @@ package com.yftach.messagemod.updating;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,10 +37,6 @@ public class UpdateHandler {
 	
 	public static void placeEntites(LevelAccessor level, ChunkAccess chunk) {	
 		placeMessages(level, chunk);	
-	}
-	
-	public static void addMessages() {
-		
 	}
 	
 	private static void placeMessages(LevelAccessor level, ChunkAccess chunk) {
