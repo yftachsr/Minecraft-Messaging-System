@@ -133,7 +133,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
 		
 		if(!shouldCommit()) {
-			Message toSend = new Message(player.getStringUUID(), this.menu.blockEntity.getId(),
+			Message toSend = new Message(this.menu.blockEntity.getAuthorUUID(), this.menu.blockEntity.getId(),
 					messagePos.getX(), messagePos.getY(), messagePos.getZ(),
 					textField.getText(), dir, this.menu.blockEntity.getLikes() + 1);	
 			HttpResponse<String> res = Communication.putReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE,
