@@ -39,6 +39,11 @@ public class UpdateHandler {
 		placeMessages(level, chunk);	
 	}
 	
+	/**
+	 * Places the messages in the current chunk
+	 * @param level
+	 * @param chunk
+	 */
 	private static void placeMessages(LevelAccessor level, ChunkAccess chunk) {
 		Iterator<Message> iterator = messages.iterator();
 		HashSet<Message> toAdd = new HashSet<Message>();
