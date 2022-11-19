@@ -64,13 +64,13 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		super.init();
 
 		// TEXT FIELD
-		textField = new TextField(5, 15, this.font, this.width / 2 - 73, this.height / 3 - 25, 
+		textField = new TextField(5, 15, this.font, this.width / 2 - 73, this.height / 3 - 24, 
 				95, 10, Component.translatable("messageBlock.text"), this);
 		for(ClearEditBox box: textField.getRows())
 			this.addWidget(box);
 		if(this.menu.blockEntity.getText() == "") 
 			initMessage();
-
+		
 		textField.setText(this.menu.blockEntity.getText());
 		textField.setEditable(this.menu.blockEntity.isEditable());
 		textField.setUneditableTextColor(uneditableColor);
@@ -79,7 +79,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	
 		// BUTTONS
 		if(this.menu.blockEntity.getAuthorUUID().equals(player.getStringUUID())) // Only the author of the message can delete it
-			this.addRenderableWidget(new Button(this.width / 2 + 87, this.height / 5 - 8, 24, 20,
+			this.addRenderableWidget(new Button(this.width / 2 + 87, this.height / 5 - 5, 24, 20,
 					Component.literal("DEL"), (p_169820_) -> {
 				this.deleteBtn();
 				}
