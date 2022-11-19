@@ -21,7 +21,7 @@ modId="messagemod" #mandatory
 # see the associated build.gradle script for how to populate this completely automatically during a build
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="First Mod" #mandatory
+displayName="Messaging System Mod" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -35,7 +35,7 @@ authors="Yftach" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 
-Messaging System Mod
+This mod allows you to leave messages to other players to see
 
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.

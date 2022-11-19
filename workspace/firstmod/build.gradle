@@ -173,7 +173,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "First Mod",
+                "Specification-Title"     : "Messaging System Mod",
                 "Specification-Vendor"    : "Yftach",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
