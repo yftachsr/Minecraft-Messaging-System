@@ -30,7 +30,7 @@ public class ModEvents {
 	
 	private static final String FAILURE_MESSAGE = "message.messagemod.db_messages_failure";
 	
-	private final static int FREQUENCY = 9000;
+	private final static int FREQUENCY = 1200; // Currently pretty frequent, subject to change
 	private static int updateCounter = 0;
 	public static boolean earlyUpdate = false;
 	
