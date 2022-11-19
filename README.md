@@ -18,4 +18,4 @@ The most simple way to try the mod out is to download [forge for 1.19.2](https:/
 
 Alternatively you can create a workspace in eclipse under the ```workspace``` folder and import ```firstmod``` as a gradle project. In eclipse navigate to ```gradle tasks``` tab in the lower panel. Run ```eclipse``` under ```ide```, run ```genEclipseRuns``` under ```forgegradle runs``` and finally run ```runclient``` under the same folder, now minecraft should open.
 #### **_See another explanation of this under_ ```workspace/firstmod/README.txt```**.
-Importent to note that if you choose to run the mod this way, the message will never show who writen the message because your player UUID in this environment is not real.
+Importent to note that if you choose to run the mod by the second option, the message will never show who writen the message because your player UUID in this environment is not real.
