@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.messagemod.MessagingSystemMod;
 import com.yftach.messagemod.block.MessageBlock;
+import com.yftach.messagemod.event.ModEvents;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.minecraftNetworking.ModMessages;
 import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
@@ -237,6 +238,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		if(res == null || res.statusCode() != 200)
 			player.sendSystemMessage(Component.translatable(DB_UPDATE_FAILURE).withStyle(ChatFormatting.RED));
 		else {	
+			ModEvents.earlyUpdate = true;
 			this.menu.blockEntity.setEditable(false);
 			this.menu.blockEntity.setId(new Gson().fromJson(res.body(), JsonObject.class).get("_id").getAsString());
 			player.sendSystemMessage(Component.translatable(MESSAGE_COMMITED).withStyle(ChatFormatting.GREEN));

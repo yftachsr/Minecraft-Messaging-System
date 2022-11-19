@@ -32,12 +32,13 @@ public class ModEvents {
 	
 	private final static int FREQUENCY = 9000;
 	private static int updateCounter = 0;
+	public static boolean earlyUpdate = false;
 	
 	
 	@SubscribeEvent
 	public static void tick(TickEvent.LevelTickEvent event) {
 		updateCounter++;
-		if(updateCounter % FREQUENCY == 0) {
+		if(updateCounter % FREQUENCY == 0 || earlyUpdate) {
 			HttpResponse<String> response = Communication.getReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE);
 			if(response != null && response.statusCode() == 200) { 
 				UpdateHandler.messages.addAll(UpdateHandler.parseJSON(response.body()));
@@ -46,6 +47,7 @@ public class ModEvents {
 					player.sendSystemMessage(
 							Component.translatable(FAILURE_MESSAGE).withStyle(ChatFormatting.RED));		
 			}
+			earlyUpdate = false;
 			updateCounter = 1; // To avoid reaching gigantic numbers
 			//System.out.println(UpdateHandler.messages);
 		}
@@ -63,7 +65,6 @@ public class ModEvents {
 	
 	@SubscribeEvent
 	public static void loadChunkModBlocks(ChunkEvent.Load event) {
-		System.out.println(UpdateHandler.messages);
 		if(UpdateHandler.messages.size() > 0)
 			UpdateHandler.placeEntites(event.getLevel(), event.getChunk());
 	}
@@ -81,8 +82,7 @@ public class ModEvents {
 				
 				if(message.toBeDeleted())
 					iter.remove();
-			}
-			
+			}	
 		}
 		
 	}
