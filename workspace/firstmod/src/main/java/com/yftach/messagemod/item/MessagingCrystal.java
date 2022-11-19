@@ -16,6 +16,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MessagingCrystal extends Item{
+	
+	private static final String INSTRUCTION_MESSAGE = "message.messagemod.instruction_message";
+	private static final String PLACEMENT_FAILURE = "message.messagemod.placement_failure";
 
 	public MessagingCrystal(Properties p_41383_) {
 		super(p_41383_);
@@ -31,14 +34,10 @@ public class MessagingCrystal extends Item{
 				!isOnMessageBlock(level, player)) {
 			BlockPos playerPos = player.blockPosition();
 			level.setBlockAndUpdate(playerPos, getDirection(player));
-			player.sendSystemMessage(Component.literal(
-					"To commit the message please enter text (after commiting the message cannot be edited!)")
-					.withStyle(ChatFormatting.GREEN));
+			player.sendSystemMessage(Component.translatable(INSTRUCTION_MESSAGE).withStyle(ChatFormatting.GREEN));
 		} 
 		else
-			player.sendSystemMessage(Component.literal(
-					"Cannot place a message here!").withStyle(ChatFormatting.RED));
-		
+			player.sendSystemMessage(Component.translatable(PLACEMENT_FAILURE).withStyle(ChatFormatting.RED));
 		
 		return super.use(level, player, hand);
 		

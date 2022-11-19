@@ -10,6 +10,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.yftach.messagemod.MessagingSystemMod;
 import com.yftach.messagemod.block.MessageBlock;
 import com.yftach.messagemod.init.BlockInit;
+import com.yftach.messagemod.minecraftNetworking.ModMessages;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.widgets.ClearEditBox;
 import com.yftach.messagemod.screen.widgets.TextField;
@@ -29,13 +31,19 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu> {
 
+	private static final String MOJANGE_FAILURE = "message.messagemod.mojange_failure";
+	private static final String DB_UPDATE_FAILURE = "message.messagemod.db_update_failure";
+	private static final String DB_LIKE_FAILURE = "message.messagemod.db_like_failure";
+	private static final String LIKE_FAILURE = "message.messagemod.like_failure";
+	private static final String MESSAGE_COMMITED = "message.messagemod.message_commited";
+	
 	private static final ResourceLocation TEXTURE = new ResourceLocation(MessagingSystemMod.MOD_ID,
 			"textures/gui/message_block_gui.png");
 	private final int uneditableColor = 10460889;
 
 	private TextField textField;
 	private Player player;
-	private String authorUUID, authorName;
+	private String authorName;
 	private static boolean open = false; 
 	private boolean commit = true;
 	private ClearEditBox likesCounter;
@@ -53,24 +61,34 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	protected void init() {
 		open = true;
 		super.init();
-		this.addRenderableWidget(new Button(this.width / 2 + 27, this.height / 2 - 40, 32, 20,
-				Component.literal("LIKE"), (p_169820_) -> {
-			this.btn();
-		}));
-		
+
 		// TEXT FIELD
-		textField = new TextField(5, this.font, this.width / 2 - 73, this.height / 3 - 25, 
+		textField = new TextField(5, 15, this.font, this.width / 2 - 73, this.height / 3 - 25, 
 				95, 10, Component.translatable("messageBlock.text"), this);
 		for(ClearEditBox box: textField.getRows())
 			this.addWidget(box);
 		if(this.menu.blockEntity.getText() == "") 
 			initMessage();
-			
+
 		textField.setText(this.menu.blockEntity.getText());
 		textField.setEditable(this.menu.blockEntity.isEditable());
 		textField.setUneditableTextColor(uneditableColor);
 		textField.setFocus(this.menu.blockEntity.getFocusedRow());
 		textField.setCursorPos(this.menu.blockEntity.getFocusedRow(), this.menu.blockEntity.getCusorPos());
+	
+		// BUTTONS
+		if(this.menu.blockEntity.getAuthorUUID().equals(player.getStringUUID())) // Only the author of the message can delete it
+			this.addRenderableWidget(new Button(this.width / 2 + 87, this.height / 5 - 8, 24, 20,
+					Component.literal("DEL"), (p_169820_) -> {
+				this.deleteBtn();
+				}
+			));
+	
+		this.addRenderableWidget(new Button(this.width / 2 + 30, this.height / 2 - 40, 32, 20,
+				Component.literal("LIKE"), (p_169820_) -> {
+			this.likeBtn();
+			}
+		));
 		
 		// WRITEN BY TEXT
 		ClearEditBox writenByBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 30
@@ -83,8 +101,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		// AUTHOR NAME TEXT
 		ClearEditBox authorBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 17
 				, 70, 10, Component.translatable("messageBlock.author"));
-		if(this.menu.blockEntity.getAuthorName() == "" && this.menu.blockEntity.getFindAuthorName())
-			authorName = getAuthorName(authorUUID);
+		if(this.menu.blockEntity.getAuthorName() == "" 
+				&& this.menu.blockEntity.getFindAuthorName() && this.menu.blockEntity.getAuthorUUID() != "")
+			authorName = getAuthorName(this.menu.blockEntity.getAuthorUUID());
 		else
 			authorName = this.menu.blockEntity.getAuthorName();
 		this.menu.blockEntity.setFindAuthorName(true);
@@ -103,10 +122,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		
 	}
 
-	private void btn() {
+	private void likeBtn() {
 		if(this.menu.blockEntity.getLiked()) {
-			player.sendSystemMessage(Component.literal(
-					"You have already liked this message!").withStyle(ChatFormatting.RED));
+			player.sendSystemMessage(Component.translatable(LIKE_FAILURE).withStyle(ChatFormatting.RED));
 			return;	
 		}
 		
@@ -120,8 +138,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			HttpResponse<String> res = Communication.putReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE,
 					new Gson().toJson(toSend));
 			if(res == null || res.statusCode() != 200) {
-				player.sendSystemMessage(Component.literal(
-						"Couldn't update the database! Try to like again the message.").withStyle(ChatFormatting.RED));
+				player.sendSystemMessage(Component.translatable(DB_LIKE_FAILURE).withStyle(ChatFormatting.RED));
 				return;
 			}
 		}
@@ -129,6 +146,16 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		this.menu.blockEntity.setLiked(true);
 		likesCounter.setValue("" + this.menu.blockEntity.getLikes());
 		
+	}
+	
+	private void deleteBtn() {
+		Communication.deleteReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE, 
+				this.menu.blockEntity.getId());
+		UpdateHandler.setToBeDeleted(this.menu.blockEntity.getId());
+		ModMessages.sendToServer(new UpdateModBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
+		commit = false;
+		open = false;
+		keyPressed(256, 1, 0); // simulate 'esc' key pressed to close the screen
 	}
 
 	@Override
@@ -152,7 +179,6 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 
 	@Override
 	public boolean charTyped(char pCodePoint, int pModifiers) {
-
 		super.charTyped(pCodePoint, pModifiers);
 		textField.charTyped(pCodePoint, pModifiers);
 		this.menu.blockEntity.setText(textField.getText());
@@ -199,6 +225,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		}
 		
 		this.menu.blockEntity.setAuthorName(authorName);
+		this.menu.blockEntity.setAuthorUUID(player.getStringUUID());
 		int dir = directionToInt(this.menu.blockEntity.getBlockState());
 		BlockPos messagePos = this.menu.blockEntity.getBlockPos();
 		Message toSend = new Message(player.getStringUUID(), 
@@ -208,12 +235,11 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		HttpResponse<String> res = Communication.postReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE,
 				new Gson().toJson(toSend));
 		if(res == null || res.statusCode() != 200)
-			player.sendSystemMessage(Component.literal(
-					"Couldn't update the database! Try to re-enter and exit the message.").withStyle(ChatFormatting.RED));
+			player.sendSystemMessage(Component.translatable(DB_UPDATE_FAILURE).withStyle(ChatFormatting.RED));
 		else {	
 			this.menu.blockEntity.setEditable(false);
 			this.menu.blockEntity.setId(new Gson().fromJson(res.body(), JsonObject.class).get("_id").getAsString());
-			
+			player.sendSystemMessage(Component.translatable(MESSAGE_COMMITED).withStyle(ChatFormatting.GREEN));
 		}
 			
 		super.onClose();
@@ -222,8 +248,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	private String getAuthorName(String uuid) {
 		HttpResponse<String> res = Communication.getReq("https://api.mojang.com/user/profile/" + uuid);
 		if(res == null || res.statusCode() != 200) {
-			player.sendSystemMessage(Component.literal(
-					"Couldn't retrieve message author username from Mojange servers").withStyle(ChatFormatting.RED));	
+			player.sendSystemMessage(Component.translatable(MOJANGE_FAILURE).withStyle(ChatFormatting.RED));	
 			return "";
 		}
 		
@@ -245,12 +270,13 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			BlockPos pos = new BlockPos(message.getX(), message.getY(), message.getZ());
 			if(pos.equals(this.menu.blockEntity.getBlockPos())) {
 				this.menu.blockEntity.setEditable(false);
-				authorUUID = message.getUUID();
+				this.menu.blockEntity.setAuthorUUID(message.getUUID());
 				this.menu.blockEntity.setLikes(message.getLikes());
 				this.menu.blockEntity.setId(message.getId());
 				this.menu.blockEntity.setText(message.getText());
+				return;
 			}
-		}
+		}		
 	}
 	
 	public static boolean isOpen() {

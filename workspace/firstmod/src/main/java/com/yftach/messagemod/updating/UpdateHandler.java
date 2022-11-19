@@ -6,14 +6,14 @@ import java.util.Iterator;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yftach.messagemod.block.MessageBlock;
 import com.yftach.messagemod.init.BlockInit;
+import com.yftach.messagemod.minecraftNetworking.ModMessages;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 /**
@@ -29,7 +29,7 @@ public class UpdateHandler {
 	 * @param jsonString
 	 * @return - The converted array list
 	 */
-	public static HashSet<Message> toArrayList(String jsonString){
+	public static HashSet<Message> parseJSON(String jsonString){
 		Gson gson = new Gson();
 		Type messageListType = new TypeToken<HashSet<Message>>() {}.getType();
 		return gson.fromJson(jsonString, messageListType);
@@ -44,20 +44,19 @@ public class UpdateHandler {
 		HashSet<Message> toAdd = new HashSet<Message>();
 		while (iterator.hasNext()) {
 			Message message = iterator.next();
-			if(!inChunk(chunk, message))
+			if(!inChunk(chunk, message.getBlockPos()))
 				continue;
-			BlockState state = BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
-					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[message.dir]);
-			BlockPos validPos = findValidBlockPos(chunk, message);
 			
+			BlockPos validPos = findValidBlockPos(chunk, message);
+			boolean onMessage = chunk.getBlockState(validPos.below()).getBlock() == BlockInit.MASSAGE_BLOCK.get();
 			if(level.isClientSide()) {
 				iterator.remove();
-				message.setY(validPos.getY() - 1);
+				message.setY(validPos.getY() + (onMessage ? -1 : 0));
 				toAdd.add(message);
+				if(!onMessage)
+					ModMessages.sendToServer(new UpdateModBlockC2SPacket(message.getBlockPos(), true, message.dir));
 			}
 			
-			if(!level.isClientSide() && chunk.getBlockState(validPos.below()).getBlock() != BlockInit.MASSAGE_BLOCK.get())
-				chunk.setBlockState(validPos, state, false);
 		}
 		messages.addAll(toAdd);
 	}
@@ -69,7 +68,7 @@ public class UpdateHandler {
 	 * @return A valid position for placement
 	 */
 	private static <T extends ModSchema> BlockPos findValidBlockPos(ChunkAccess chunk, T block) {
-		BlockPos currentPos = new BlockPos(block.x, chunk.getMaxBuildHeight(), block.z);
+		BlockPos currentPos = new BlockPos(block.getX(), chunk.getMaxBuildHeight(), block.getZ());
 		while(currentPos.getY() > chunk.getMinBuildHeight()) {
 			if(chunk.getBlockState(currentPos).getBlock() == Blocks.GRASS) // avoid placing on top of grass
 				return chunk.getBlockState(currentPos.below()).getBlock() == Blocks.GRASS 
@@ -78,7 +77,7 @@ public class UpdateHandler {
 				return currentPos.above();
 			currentPos = currentPos.below();
 		}
-		return new BlockPos(block.getX(), block.getY(), block.getZ());
+		return block.getBlockPos();
 	}
 	
 	/**
@@ -87,10 +86,27 @@ public class UpdateHandler {
 	 * @param block - The block to be checked
 	 * @return Whether the block is in the chunk
 	 */
-	private static <T extends ModSchema> boolean inChunk(ChunkAccess chunk, T block) {
+	public static <T extends ModSchema> boolean inChunk(ChunkAccess chunk, BlockPos pos) {
 		ChunkPos chunkPos = chunk.getPos();
-		return (int)block.getX() >= chunkPos.getMinBlockX() && (int)block.getX() <= chunkPos.getMaxBlockX() 
-				&& (int)block.getZ() >= chunkPos.getMinBlockZ() && (int)block.getZ() <= chunkPos.getMaxBlockZ();
+		return (int)pos.getX() >= chunkPos.getMinBlockX() && (int)pos.getX() <= chunkPos.getMaxBlockX() 
+				&& (int)pos.getZ() >= chunkPos.getMinBlockZ() && (int)pos.getZ() <= chunkPos.getMaxBlockZ();
+	}
+	
+	/**
+	 * Mark a message with the corresponding id to be deleted
+	 * @param id - id of the message to mark to be deleted
+	 */
+	public static void setToBeDeleted(String id) {
+		Iterator<Message> iter = messages.iterator();
+		while(iter.hasNext()) {
+			Message message = iter.next();
+			if(message.getId().equals(id)) {
+				iter.remove();
+				message.setToBeDeleted(true);
+				messages.add(message);
+				break;
+			}
+		}
 	}
 	
 }

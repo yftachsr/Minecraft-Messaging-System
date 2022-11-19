@@ -2,11 +2,13 @@ package com.yftach.messagemod;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.yftach.messagemod.block.entity.BlockEntities;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.init.ItemInit;
+import com.yftach.messagemod.minecraftNetworking.ModMessages;
 import com.yftach.messagemod.screen.MenuTypes;
 import com.yftach.messagemod.screen.MessageBlockScreen;
 
@@ -46,8 +48,14 @@ public class MessagingSystemMod {
 		
 		MenuTypes.register(bus);
 		
+		bus.addListener(this::commonSetup);
+		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
+	
+	private void commonSetup(final FMLCommonSetupEvent event) {
+        ModMessages.register();
+    }
 	
 	@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 	public static class ClientModEvents {

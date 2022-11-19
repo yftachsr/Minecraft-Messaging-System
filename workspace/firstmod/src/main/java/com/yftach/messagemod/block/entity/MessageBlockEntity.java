@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	
-	private String text = "", authorName = "", id = "";
+	private String text = "", authorUUID = "", authorName = "", id = "";
 	private boolean editable = true, findAuthorName = true, liked = false;
 	private int focusedRow = 0, cursorPos = 0, likes = 0;
 
@@ -39,6 +39,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		nbt.putInt("cursor", cursorPos);
 		nbt.putInt("row", focusedRow);
 		nbt.putString("author", authorName);
+		nbt.putString("authorUUID", authorUUID);
 		nbt.putBoolean("get_name", findAuthorName);
 		nbt.putString("id", id);
 		nbt.putInt("likes", likes);
@@ -54,6 +55,7 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 		cursorPos = nbt.getInt("cursor");
 		focusedRow = nbt.getInt("row");
 		authorName = nbt.getString("author");
+		authorUUID = nbt.getString("authorUUID");
 		findAuthorName = nbt.getBoolean("get_name");
 		id = nbt.getString("id");
 		likes = nbt.getInt("likes");
@@ -90,6 +92,14 @@ public class MessageBlockEntity extends BlockEntity implements MenuProvider{
 	
 	public void setAuthorName(String name) {
 		this.authorName = name;
+	}
+	
+	public String getAuthorUUID() {
+		return authorUUID;
+	}
+	
+	public void setAuthorUUID(String uuid) {
+		this.authorUUID = uuid;
 	}
 	
 	public boolean getFindAuthorName() {

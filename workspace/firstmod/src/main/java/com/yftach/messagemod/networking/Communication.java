@@ -23,7 +23,6 @@ public class Communication {
 	            .GET()
 	            .build();
 	            
-		
         HttpResponse<String> response = null;
 		try {
 			response = client.send(request, BodyHandlers.ofString());
@@ -32,8 +31,7 @@ public class Communication {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-
-        
+  
         return response;
 	}
 	
@@ -60,8 +58,7 @@ public class Communication {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-
-        
+ 
         return response;
 	}
 	
@@ -88,8 +85,28 @@ public class Communication {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
-
-        
+  
+        return response;
+	}
+	
+	public static HttpResponse<String> deleteReq(String endPoint, String id) {
+		
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(endPoint + "/" + id))
+	            .header("Content-Type", "application/json")
+	            .DELETE()
+	            .build();
+		
+        HttpResponse<String> response = null;
+		try {
+			response = client.send(request, BodyHandlers.ofString());
+//			System.out.println("status:" + response.statusCode());
+//	        System.out.println("response:\n" + response.body());
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+  
         return response;
 	}
 }

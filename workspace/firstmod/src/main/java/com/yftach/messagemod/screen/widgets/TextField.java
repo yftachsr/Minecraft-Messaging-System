@@ -18,19 +18,20 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	private int focusedRow;
 	private ArrayList<ClearEditBox> textBoxes;
 	private Screen screen;
-	private final int MAX_ROW_LENGTH = 14;
+	private int maxRowLength;
 	private final int KEY_BACKSPACE = 259;
 	private final int KEY_ENTER = 257;
 	private final int KEY_DOWN = 264;
 	private final int KEY_UP = 265;
 	private boolean transfer = false, lineFull = false, fillLine = false;
 
-	public TextField(int rows, Font font, int pX, int pY, int width, int rowHeight, Component message, Screen screen) {
+	public TextField(int rows, int maxRowLength, Font font, int pX, int pY, int width, int rowHeight, Component message, Screen screen) {
 		super(pX, pY, width, rowHeight * rows, message);
+		this.maxRowLength = maxRowLength;
 		textBoxes = new ArrayList<ClearEditBox>();
 		for (int i = 0; i < rows; i++) {
 			textBoxes.add(new ClearEditBox(font, pX, pY + i * rowHeight, width, rowHeight, null, message));
-			textBoxes.get(i).setMaxLength(MAX_ROW_LENGTH + 1);
+			textBoxes.get(i).setMaxLength(maxRowLength + 1);
 			
 		}
 		this.screen = screen;
@@ -81,7 +82,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	public void setText(String text) {	
 		for(ClearEditBox box: textBoxes) {
 			int index = text.indexOf("\n");
-			if(index <= MAX_ROW_LENGTH && index > -1) {
+			if(index <= maxRowLength && index > -1) {
 				box.setValue(text.substring(0, index));
 				try {
 					text = text.substring(index + 1);
@@ -107,7 +108,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		if (focusedRow != textBoxes.size() - 1 && lineFull) {
 			cursorPos = textBoxes.get(focusedRow).getCursorPosition();
 			handleFullLine(focusedRow);
-			if(cursorPos == MAX_ROW_LENGTH + 1) {
+			if(cursorPos == maxRowLength + 1) {
 				setFocus(focusedRow + 1);
 				textBoxes.get(focusedRow - 1).moveCursorToStart();
 				setCursorPos(focusedRow, 1);
@@ -132,9 +133,9 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 				transferText(focusedRow + 1, focusedRow, true, true);
 			}
 			if(focusedRow != textBoxes.size() - 1 && fillLine
-					&& textBoxes.get(currentFocusedRow).getValue().length() >= MAX_ROW_LENGTH - 1) {
+					&& textBoxes.get(currentFocusedRow).getValue().length() >= maxRowLength - 1) {
 				fillLine(currentFocusedRow, currentFocusedRow >= textBoxes.size() - 2 || 
-						textBoxes.get(currentFocusedRow + 1).getValue().length() < MAX_ROW_LENGTH);
+						textBoxes.get(currentFocusedRow + 1).getValue().length() < maxRowLength);
 			}
 			break;
 		case KEY_ENTER:
@@ -154,7 +155,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		}
 		
 		transfer = textBoxes.get(focusedRow).getCursorPosition() == 0 && focusedRow != 0;
-		lineFull = textBoxes.get(focusedRow).getValue().length() >= MAX_ROW_LENGTH;
+		lineFull = textBoxes.get(focusedRow).getValue().length() >= maxRowLength;
 		fillLine = focusedRow != 0 || textBoxes.get(focusedRow).getCursorPosition() != 0;
 		
 		return true;
@@ -178,8 +179,6 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	 * @param lastIter - is the last iteration of the recursion
 	 */
 	private void fillLine(int row, boolean lastIter) {
-		
-		System.out.println(lastIter);
 		if(row >= textBoxes.size() - 1 || textBoxes.get(row + 1).getValue().length() == 0)
 			return;
 		int cursorPos = textBoxes.get(row).getCursorPosition();
@@ -189,7 +188,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		setCursorPos(row, cursorPos);
 		if(!lastIter)
 			fillLine(row + 1, row + 1 >= textBoxes.size() - 2 || 
-				textBoxes.get(row + 2).getValue().length() < MAX_ROW_LENGTH);
+				textBoxes.get(row + 2).getValue().length() < maxRowLength);
 	}
 	
 	/**
@@ -200,20 +199,20 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	private void handleFullLine(int row) {
 		
 		if(row >= textBoxes.size() - 1 || row == textBoxes.size() - 2 
-				&& textBoxes.get(row + 1).getValue().length() >= MAX_ROW_LENGTH)
+				&& textBoxes.get(row + 1).getValue().length() >= maxRowLength)
 			return;
 		
-		if(textBoxes.get(row + 1).getValue().length() >= MAX_ROW_LENGTH) 
+		if(textBoxes.get(row + 1).getValue().length() >= maxRowLength) 
 			handleFullLine(row + 1);
 		
 		char transferChar;
 		try {
-			transferChar = textBoxes.get(row).getValue().charAt(MAX_ROW_LENGTH);
+			transferChar = textBoxes.get(row).getValue().charAt(maxRowLength);
 		} catch(StringIndexOutOfBoundsException e) {
-			transferChar = textBoxes.get(row).getValue().charAt(MAX_ROW_LENGTH - 1);
+			transferChar = textBoxes.get(row).getValue().charAt(maxRowLength - 1);
 		}
 	
-		textBoxes.get(row).setValue(textBoxes.get(row).getValue().substring(0, MAX_ROW_LENGTH));
+		textBoxes.get(row).setValue(textBoxes.get(row).getValue().substring(0, maxRowLength));
 		textBoxes.get(row + 1).setValue(transferChar + textBoxes.get(row + 1).getValue());
 	}
 	
@@ -233,7 +232,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	private void transferText(int from, int to, boolean cutFromBack, boolean copyToFront) {
 		
 		int endPos = textBoxes.get(to).getValue().length();
-		int spaceLeft = MAX_ROW_LENGTH - endPos;
+		int spaceLeft = maxRowLength - endPos;
 		if(spaceLeft == -1)
 			return;
 		ClearEditBox fromBox = textBoxes.get(from);
@@ -276,7 +275,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		}
 		
 		transfer = textBoxes.get(focusedRow).getCursorPosition() == 0 && focusedRow != 0;
-		lineFull = textBoxes.get(focusedRow).getValue().length() >= MAX_ROW_LENGTH;
+		lineFull = textBoxes.get(focusedRow).getValue().length() >= maxRowLength;
 			
 	}
 	
@@ -300,7 +299,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 			screen.setFocused(textBoxes.get(focusedIndex));
 			focusedRow = focusedIndex;
 			transfer = textBoxes.get(focusedRow).getCursorPosition() == 0;
-			lineFull = textBoxes.get(focusedRow).getValue().length() >= MAX_ROW_LENGTH;
+			lineFull = textBoxes.get(focusedRow).getValue().length() >= maxRowLength;
 		}
 				
 		return true;

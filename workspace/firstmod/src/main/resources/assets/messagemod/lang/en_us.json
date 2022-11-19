@@ -2,5 +2,14 @@
 	"item.messagemod.pink_apple": "Pink Apple",
 	"item.messagemod.messaging_crystal": "Messaging Crystal",
 	"itemGroup.messagemod": "Crystal",
-	"block.messagemod.message_block": "Message"
+	"block.messagemod.message_block": "Message",
+	
+	"message.messagemod.db_messages_failure": "Couldn't retrive messages from the database",
+	"message.messagemod.mojange_failure": "Couldn't retrieve message author username from Mojange servers",
+	"message.messagemod.db_update_failure": "Couldn't update the database! Try to re-enter and exit the message.",
+	"message.messagemod.db_like_failure": "Couldn't update the database! Try to like again the message.",
+	"message.messagemod.like_failure": "You have already liked this message!",
+	"message.messagemod.instruction_message": "To commit the message please enter text (after commiting the message cannot be edited!)",
+	"message.messagemod.placement_failure": "Cannot place a message here!",
+	"message.messagemod.message_commited": "Message saved"
 }
