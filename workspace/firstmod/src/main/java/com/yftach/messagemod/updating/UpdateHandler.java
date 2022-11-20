@@ -25,11 +25,10 @@ public class UpdateHandler {
 
 	/**
 	 * Converts a string in JSON format into a linked list <br>
-	 * @param <T> - Type of object to convert to
 	 * @param jsonString
 	 * @return - The converted array list
 	 */
-	public static HashSet<Message> parseJSON(String jsonString){
+	public static HashSet<Message> parseMessagesJSON(String jsonString){
 		Gson gson = new Gson();
 		Type messageListType = new TypeToken<HashSet<Message>>() {}.getType();
 		return gson.fromJson(jsonString, messageListType);

@@ -41,7 +41,7 @@ public class ModEvents {
 		if(updateCounter % FREQUENCY == 0 || earlyUpdate) {
 			HttpResponse<String> response = Communication.getReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE);
 			if(response != null && response.statusCode() == 200) { 
-				UpdateHandler.messages.addAll(UpdateHandler.parseJSON(response.body()));
+				UpdateHandler.messages.addAll(UpdateHandler.parseMessagesJSON(response.body()));
 			} else {
 				for(Player player: event.level.players()) 
 					player.sendSystemMessage(
@@ -60,7 +60,7 @@ public class ModEvents {
 			return;
 		HttpResponse<String> response = Communication.getReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE);
 		if(response != null && response.statusCode() == 200)
-			UpdateHandler.messages = UpdateHandler.parseJSON(response.body());	
+			UpdateHandler.messages = UpdateHandler.parseMessagesJSON(response.body());	
 	}
 	
 	@SubscribeEvent
