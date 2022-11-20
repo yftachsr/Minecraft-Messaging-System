@@ -12,7 +12,7 @@ import com.yftach.messagemod.block.MessageBlock;
 import com.yftach.messagemod.event.ModEvents;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.minecraftNetworking.ModMessages;
-import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.widgets.ClearEditBox;
 import com.yftach.messagemod.screen.widgets.TextField;
@@ -153,7 +153,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		Communication.deleteReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE, 
 				this.menu.blockEntity.getId());
 		UpdateHandler.setToBeDeleted(this.menu.blockEntity.getId());
-		ModMessages.sendToServer(new UpdateModBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
+		ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
 		commit = false;
 		open = false;
 		keyPressed(256, 1, 0); // simulate 'esc' key pressed to close the screen

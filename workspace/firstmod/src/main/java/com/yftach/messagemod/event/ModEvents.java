@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import com.yftach.messagemod.MessagingSystemMod;
 import com.yftach.messagemod.minecraftNetworking.ModMessages;
-import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.MessageBlockScreen;
 import com.yftach.messagemod.updating.Message;
@@ -76,7 +76,7 @@ public class ModEvents {
 			Message message = iter.next();
 			if(UpdateHandler.inChunk(event.getChunk(), message.getBlockPos())) { // The message is in the chunk
 				if(event.getLevel().isClientSide())
-					ModMessages.sendToServer(new UpdateModBlockC2SPacket(message.getBlockPos(), false));
+					ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(message.getBlockPos(), false));
 				else
 					event.getChunk().setBlockState(message.getBlockPos(), Blocks.AIR.defaultBlockState(), false);
 				

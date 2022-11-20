@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.minecraftNetworking.ModMessages;
-import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
@@ -59,7 +59,7 @@ public class UpdateHandler {
 				message.setY(validPos.getY() + (onMessage ? -1 : 0));
 				toAdd.add(message);
 				if(!onMessage)
-					ModMessages.sendToServer(new UpdateModBlockC2SPacket(message.getBlockPos(), true, message.dir));
+					ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(message.getBlockPos(), true, message.dir));
 			}
 			
 		}

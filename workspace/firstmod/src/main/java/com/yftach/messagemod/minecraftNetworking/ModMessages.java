@@ -1,7 +1,7 @@
 package com.yftach.messagemod.minecraftNetworking;
 
 import com.yftach.messagemod.MessagingSystemMod;
-import com.yftach.messagemod.minecraftNetworking.packets.UpdateModBlockC2SPacket;
+import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,10 +28,10 @@ public class ModMessages {
 
 	        INSTANCE = net;
 
-	        net.messageBuilder(UpdateModBlockC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
-	                .decoder(UpdateModBlockC2SPacket::new)
-	                .encoder(UpdateModBlockC2SPacket::toBytes)
-	                .consumerMainThread(UpdateModBlockC2SPacket::handle)
+	        net.messageBuilder(UpdateMessageBlockC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+	                .decoder(UpdateMessageBlockC2SPacket::new)
+	                .encoder(UpdateMessageBlockC2SPacket::toBytes)
+	                .consumerMainThread(UpdateMessageBlockC2SPacket::handle)
 	                .add();
 	    }
 

@@ -11,25 +11,25 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkEvent;
 
-public class UpdateModBlockC2SPacket {
+public class UpdateMessageBlockC2SPacket {
 	
 	private BlockPos pos;
 	private boolean place; // whether to place or delete a message
 	private int direction;
 
-	public UpdateModBlockC2SPacket(BlockPos pos, boolean place, int direction) {
+	public UpdateMessageBlockC2SPacket(BlockPos pos, boolean place, int direction) {
 		this.pos = pos;
 		this.place = place;
 		this.direction = direction;
 	}
 	
-	public UpdateModBlockC2SPacket(BlockPos pos, boolean place) {
+	public UpdateMessageBlockC2SPacket(BlockPos pos, boolean place) {
 		this.pos = pos;
 		this.place = place;
 		this.direction = 0;
 	}
 	 
-	public UpdateModBlockC2SPacket(FriendlyByteBuf buf) {
+	public UpdateMessageBlockC2SPacket(FriendlyByteBuf buf) {
 		pos = buf.readBlockPos();
 		place = buf.readBoolean();
 		direction = buf.readInt();
