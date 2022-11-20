@@ -94,7 +94,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		// WRITEN BY TEXT
 		ClearEditBox writenByBox = new ClearEditBox(this.font, this.width / 2 + 25, this.height / 3 - 30
 				, 70, 10, Component.translatable("messageBlock.writen"));
-		writenByBox.setValue("Writen By:");
+		writenByBox.setValue("Written By:");
 		writenByBox.setEditable(false);
 		writenByBox.setTextColorUneditable(uneditableColor);
 		this.addRenderableWidget(writenByBox);
