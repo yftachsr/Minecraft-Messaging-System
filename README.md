@@ -1,6 +1,6 @@
 # Minecraft-Messaging-System
 
-This project is messaging system mod for minecraft
+This project a is messaging system mod for minecraft
 
 # Description
 This mod implements a messaging system (similar to the [Souls games](https://darksouls.fandom.com/wiki/Messages)) so players can leave messages to each other in singleplayer mode. 
