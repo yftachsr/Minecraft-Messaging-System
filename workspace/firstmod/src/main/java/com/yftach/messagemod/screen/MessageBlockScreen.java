@@ -37,6 +37,8 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	private static final String DB_LIKE_FAILURE = "message.messagemod.db_like_failure";
 	private static final String LIKE_FAILURE = "message.messagemod.like_failure";
 	private static final String MESSAGE_COMMITED = "message.messagemod.message_commited";
+	private static final String DELETION_FAILURE = "message.messagemod.deletion_failure";
+	private static final String DELETION_SUCCESS = "message.messagemod.deletion_success";
 	
 	private static final ResourceLocation TEXTURE = new ResourceLocation(MessagingSystemMod.MOD_ID,
 			"textures/gui/message_block_gui.png");
@@ -150,10 +152,15 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	}
 	
 	private void deleteBtn() {
-		Communication.deleteReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE, 
+		HttpResponse<String> res = Communication.deleteReq(MessagingSystemMod.SERVER_ADDRESS + MessagingSystemMod.MESSAGES_ROUTE, 
 				this.menu.blockEntity.getId());
+		if(res == null) {
+			player.sendSystemMessage(Component.translatable(DELETION_FAILURE).withStyle(ChatFormatting.RED));
+			return;
+		}
 		UpdateHandler.setToBeDeleted(this.menu.blockEntity.getId());
 		ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
+		player.sendSystemMessage(Component.translatable(DELETION_SUCCESS).withStyle(ChatFormatting.GREEN));
 		commit = false;
 		open = false;
 		keyPressed(256, 1, 0); // simulate 'esc' key pressed to close the screen

@@ -11,5 +11,7 @@
 	"message.messagemod.like_failure": "You have already liked this message!",
 	"message.messagemod.instruction_message": "To commit the message please enter text (after commiting the message cannot be edited!)",
 	"message.messagemod.placement_failure": "Cannot place a message here!",
-	"message.messagemod.message_commited": "Message saved"
+	"message.messagemod.message_commited": "Message saved",
+	"message.messagemod.deletion_failure": "Message couldn't be deleted, please try again",
+	"message.messagemod.deletion_success": "Message deleted"
 }
