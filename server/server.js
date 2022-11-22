@@ -54,6 +54,7 @@ server.put(messages_route, (req, res) => {
 })
 
 server.delete(messages_route + "/:id", (req, res) => {
+  console.log("DELETE Request Received")
   const id = req.params.id
   Message.deleteOne({ _id: id}).then((result) => {
     res.send(result)
