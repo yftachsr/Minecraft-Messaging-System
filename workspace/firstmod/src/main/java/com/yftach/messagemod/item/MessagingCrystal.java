@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MessagingCrystal extends Item{
+public class MessagingCrystal extends Item {
 	
 	private static final String INSTRUCTION_MESSAGE = "message.messagemod.instruction_message";
 	private static final String PLACEMENT_FAILURE = "message.messagemod.placement_failure";
@@ -33,7 +33,7 @@ public class MessagingCrystal extends Item{
 		if(player.isOnGround() && !player.isInFluidType() && 
 				!isOnMessageBlock(level, player)) {
 			BlockPos playerPos = player.blockPosition();
-			level.setBlockAndUpdate(playerPos, getDirection(player));
+			level.setBlockAndUpdate(playerPos, getBlockState(player));
 			player.sendSystemMessage(Component.translatable(INSTRUCTION_MESSAGE).withStyle(ChatFormatting.GREEN));
 		} 
 		else
@@ -46,7 +46,7 @@ public class MessagingCrystal extends Item{
 	private boolean isOnMessageBlock(Level world, Player player) {
 		
 		BlockState state = world.getBlockState(player.blockPosition());
-		for(Direction dir: MessageBlock.possibleDirections) 
+		for(Direction dir: MessageBlock.POSSIBLE_DIRECTIONS) 
 			if(state.equals(BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
 					.setValue(MessageBlock.FACING, dir)))
 				return true;
@@ -54,7 +54,7 @@ public class MessagingCrystal extends Item{
 			
 	}
 	
-	private BlockState getDirection(Player player) {
+	private BlockState getBlockState(Player player) {
 		
 		Direction dir = Direction.fromAxisAndDirection(player.getDirection().getAxis(),
 				player.getDirection().getAxisDirection());

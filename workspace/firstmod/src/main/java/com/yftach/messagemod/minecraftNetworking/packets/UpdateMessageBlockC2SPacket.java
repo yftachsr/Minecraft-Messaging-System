@@ -49,10 +49,9 @@ public class UpdateMessageBlockC2SPacket {
 				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());		
 			else
 				level.setBlockAndUpdate(pos, BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
-					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[this.direction]));
+					.setValue(MessageBlock.FACING, MessageBlock.POSSIBLE_DIRECTIONS[this.direction]));
 		});
 		
-		return true;
-		 
+		return true;		 
 	}
 }

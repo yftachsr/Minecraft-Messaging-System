@@ -52,5 +52,9 @@ public class Message extends ModSchema {
 		return likes;
 	}
 	
+	public void addLike() {
+		this.likes++;
+	}
+	
 	
 }

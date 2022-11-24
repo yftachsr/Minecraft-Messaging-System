@@ -34,12 +34,11 @@ public class MessageBlock extends BaseEntityBlock {
 
 	private static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.125, 1);
 	
-	public static final Direction possibleDirections[]
+	public static final Direction POSSIBLE_DIRECTIONS[]
 			= {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
 	public MessageBlock(Properties properties) {
 		super(properties);
-
 		this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
 	}
 

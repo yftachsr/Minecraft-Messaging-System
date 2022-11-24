@@ -14,7 +14,9 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log("Server is connected to DB and listening for requests")
     server.listen(PORT)
   })
-  .catch(err => console.log(err))
+  .catch(err => {
+    console.log(err)
+  })
 
 server.get(messages_route, (req,res) => {
   console.log("GET request received")

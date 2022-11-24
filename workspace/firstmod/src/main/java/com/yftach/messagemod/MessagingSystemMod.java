@@ -8,7 +8,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import com.yftach.messagemod.block.entity.BlockEntities;
 import com.yftach.messagemod.init.BlockInit;
 import com.yftach.messagemod.init.ItemInit;
-import com.yftach.messagemod.minecraftNetworking.ModMessages;
+import com.yftach.messagemod.minecraftNetworking.ModNetwork;
 import com.yftach.messagemod.screen.MenuTypes;
 import com.yftach.messagemod.screen.MessageBlockScreen;
 
@@ -54,7 +54,7 @@ public class MessagingSystemMod {
 	}
 	
 	private void commonSetup(final FMLCommonSetupEvent event) {
-        ModMessages.register();
+        ModNetwork.register();
     }
 	
 	@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

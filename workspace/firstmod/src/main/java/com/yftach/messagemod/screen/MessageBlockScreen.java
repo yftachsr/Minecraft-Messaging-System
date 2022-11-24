@@ -11,7 +11,7 @@ import com.yftach.messagemod.MessagingSystemMod;
 import com.yftach.messagemod.block.MessageBlock;
 import com.yftach.messagemod.event.ModEvents;
 import com.yftach.messagemod.init.BlockInit;
-import com.yftach.messagemod.minecraftNetworking.ModMessages;
+import com.yftach.messagemod.minecraftNetworking.ModNetwork;
 import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 import com.yftach.messagemod.networking.Communication;
 import com.yftach.messagemod.screen.widgets.ClearEditBox;
@@ -122,7 +122,6 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 		likesCounter.setEditable(false);
 		likesCounter.setTextColorUneditable(uneditableColor);
 		this.addRenderableWidget(likesCounter);
-		
 	}
 
 	private void likeBtn() {
@@ -144,6 +143,7 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 				player.sendSystemMessage(Component.translatable(DB_LIKE_FAILURE).withStyle(ChatFormatting.RED));
 				return;
 			}
+			UpdateHandler.getMessage(this.menu.blockEntity.getId()).addLike();
 		}
 		this.menu.blockEntity.setLikes(this.menu.blockEntity.getLikes() + 1);
 		this.menu.blockEntity.setLiked(true);
@@ -158,8 +158,8 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 			player.sendSystemMessage(Component.translatable(DELETION_FAILURE).withStyle(ChatFormatting.RED));
 			return;
 		}
-		UpdateHandler.setToBeDeleted(this.menu.blockEntity.getId());
-		ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
+		UpdateHandler.getMessage(this.menu.blockEntity.getId()).setToBeDeleted(true);
+		ModNetwork.sendToServer(new UpdateMessageBlockC2SPacket(this.menu.blockEntity.getBlockPos(), false));
 		player.sendSystemMessage(Component.translatable(DELETION_SUCCESS).withStyle(ChatFormatting.GREEN));
 		commit = false;
 		open = false;
@@ -265,9 +265,9 @@ public class MessageBlockScreen extends AbstractContainerScreen<MessageBlockMenu
 	}
 	
 	private int directionToInt(BlockState state) {
-		for(int i = 0; i < MessageBlock.possibleDirections.length; i++) 	
+		for(int i = 0; i < MessageBlock.POSSIBLE_DIRECTIONS.length; i++) 	
 			if(state.equals(BlockInit.MASSAGE_BLOCK.get().defaultBlockState()
-					.setValue(MessageBlock.FACING, MessageBlock.possibleDirections[i])))
+					.setValue(MessageBlock.FACING, MessageBlock.POSSIBLE_DIRECTIONS[i])))
 				return i;
 		return 0;
 	}

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yftach.messagemod.init.BlockInit;
-import com.yftach.messagemod.minecraftNetworking.ModMessages;
+import com.yftach.messagemod.minecraftNetworking.ModNetwork;
 import com.yftach.messagemod.minecraftNetworking.packets.UpdateMessageBlockC2SPacket;
 
 import net.minecraft.core.BlockPos;
@@ -58,7 +58,7 @@ public class UpdateHandler {
 				message.setY(validPos.getY() + (onMessage ? -1 : 0));
 				toAdd.add(message);
 				if(!onMessage)
-					ModMessages.sendToServer(new UpdateMessageBlockC2SPacket(message.getBlockPos(), true, message.dir));
+					ModNetwork.sendToServer(new UpdateMessageBlockC2SPacket(message.getBlockPos(), true, message.dir));
 			}
 			
 		}
@@ -97,20 +97,18 @@ public class UpdateHandler {
 	}
 	
 	/**
-	 * Mark a message with the corresponding id to be deleted
-	 * @param id - id of the message to mark to be deleted
+	 * Returns the message with the corresponding id
+	 * @param id - id of the message to be returned
+	 * @return The message with the corresponding id
 	 */
-	public static void setToBeDeleted(String id) {
+	public static Message getMessage(String id) {
 		Iterator<Message> iter = messages.iterator();
 		while(iter.hasNext()) {
 			Message message = iter.next();
-			if(message.getId().equals(id)) {
-				iter.remove();
-				message.setToBeDeleted(true);
-				messages.add(message);
-				break;
-			}
+			if(message.getId().equals(id)) 
+				return message;
 		}
+		return null;
 	}
 	
 }

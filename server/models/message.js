@@ -7,10 +7,6 @@ const messageSchema = new Schema({
         type: String,
         required: true
     },
-    id: {
-        type: String,
-        required: false
-    },
     x: {
         type: Number,
         required: true
@@ -25,7 +21,7 @@ const messageSchema = new Schema({
     },
     text: {
         type: String,
-        required: false
+        required: true
     },
     dir: {
         type: Number,

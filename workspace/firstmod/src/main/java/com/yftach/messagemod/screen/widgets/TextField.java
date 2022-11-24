@@ -12,7 +12,10 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class TextField extends AbstractWidget implements Widget, GuiEventListener {
 
 	private int focusedRow;
@@ -161,6 +164,10 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 		return true;
 	}
 	
+	/**
+	 * Lowers recursively all of the text one line down
+	 * @param row - Row to lower from
+	 */
 	private void lowerLines(int row) {
 		if(row >= textBoxes.size() - 1)
 			return;

@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MessageBlockEntity extends BlockEntity implements MenuProvider{
+public class MessageBlockEntity extends BlockEntity implements MenuProvider {
 	
 	private String text = "", authorUUID = "", authorName = "", id = "";
 	private boolean editable = true, findAuthorName = true, liked = false;

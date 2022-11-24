@@ -26,14 +26,12 @@ public class BlockInit {
 					.sound(SoundType.AMETHYST).dynamicShape().noOcclusion()), 
 			object -> () -> new BlockItem(object.get(), new Item.Properties()));
 	
-	
 	private static <T extends Block> RegistryObject<T> registerBlock(final String name, final Supplier<? extends T> block){
 		return BLOCKS.register(name, block);
 	}
 	
 	private static <T extends Block> RegistryObject<T> register(final String name, final Supplier<? extends T> block,
 			Function<RegistryObject<T>, Supplier<? extends Item>> item){
-		
 		RegistryObject<T> obj = registerBlock(name, block);
 		ITEMS.register(name, item.apply(obj));
 		return obj;
